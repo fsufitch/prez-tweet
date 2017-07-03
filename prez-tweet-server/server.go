@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/ui"
@@ -24,6 +25,8 @@ func StartServer() (err error) {
 	if err != nil {
 		return err
 	}
+	serveAddress := getServeAddress()
+	log.Println("Serving... " + serveAddress)
 	err = http.ListenAndServe(getServeAddress(), createRoutes())
 	return
 }

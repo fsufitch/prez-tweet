@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 )
@@ -14,6 +15,7 @@ func initEnv() (err error) {
 	twitterAPIToken = os.Getenv("TWITTER_TOKEN")
 	webPort, err = strconv.Atoi(os.Getenv("PORT"))
 	if err != nil || webPort == 0 {
+		log.Println("PORT not set, using default")
 		webPort = 8080
 		err = nil
 	}
@@ -31,6 +33,7 @@ func initEnv() (err error) {
 			return errors.New("Could not determine API URL")
 		}
 		apiHost = fmt.Sprintf("https://%s.herokuapp.com", dynoID)
+		log.Println("API_HOST not set, using default: " + apiHost)
 	}
 
 	return
