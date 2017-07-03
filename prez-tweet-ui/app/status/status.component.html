@@ -1,0 +1,7 @@
+<div [hidden]="ok$ | async">
+  <!-- not ok -->
+  Could not contact the API server.
+</div>
+<div [hidden]="!(ok$ | async)">
+  API server uptime: {{uptime$ | async}}
+</div>

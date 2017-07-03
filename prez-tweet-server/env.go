@@ -32,7 +32,7 @@ func initEnv() (err error) {
 		if herokuAppName == "" {
 			return errors.New("Could not determine API URL")
 		}
-		apiHost = fmt.Sprintf("https://%s.herokuapp.com", herokuAppName)
+		apiHost = herokuAppName + ".herokuapp.com"
 		log.Println("API_HOST not set, using default: " + apiHost)
 	}
 
