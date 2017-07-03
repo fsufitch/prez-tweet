@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-var apiHost, jsBundleURL, dynoID, twitterAPIToken string
+var apiHost, jsBundleURL, herokuAppName, twitterAPIToken string
 var webPort int
 
 func initEnv() (err error) {
@@ -25,14 +25,14 @@ func initEnv() (err error) {
 		return errors.New("Could not determing JS bundle URL")
 	}
 
-	dynoID = os.Getenv("HEROKU_DYNO_ID")
+	herokuAppName = os.Getenv("HEROKU_APP_NAME")
 
 	apiHost = os.Getenv("API_HOST")
 	if apiHost == "" {
-		if dynoID == "" {
+		if herokuAppName == "" {
 			return errors.New("Could not determine API URL")
 		}
-		apiHost = fmt.Sprintf("https://%s.herokuapp.com", dynoID)
+		apiHost = fmt.Sprintf("https://%s.herokuapp.com", herokuAppName)
 		log.Println("API_HOST not set, using default: " + apiHost)
 	}
 
