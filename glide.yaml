@@ -2,3 +2,4 @@ package: github.com/fsufitch/prez-tweet
 import:
 - package: github.com/gorilla/mux
   version: ^1.4.0
+- package: github.com/NYTimes/gziphandler
