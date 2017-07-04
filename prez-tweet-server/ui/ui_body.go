@@ -11,11 +11,12 @@ const uiBody = `
     <script>
       var PREZ_TWEET_API_HOST = "__API_HOST__";
     </script>
-    <script src="__JS_BUNDLE__"></script>
   </head>
   <body>
     <ng2app>
+      Loading...
     </ng2app>
+    <script src="__JS_BUNDLE__"></script>
   </body>
 </html>
 `

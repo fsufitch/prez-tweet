@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "webpack": "webpack",
-    "webpack:server": "webpack-dev-server"
+    "webpack:server": "webpack-dev-server --progress --color"
   },
   "dependencies": {
     "@angular/common": "^4.2.5",
@@ -29,6 +29,7 @@
     "html-loader": "^0.4.5",
     "html-webpack-plugin": "^2.29.0",
     "node-sass": "^4.5.3",
+    "postcss-loader": "^2.0.6",
     "raw-loader": "^0.5.1",
     "sass-loader": "^6.0.6",
     "to-string-loader": "^1.1.5",

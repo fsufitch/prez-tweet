@@ -43,7 +43,7 @@ module.exports = () => {
       {test: /\.ts$/, loader: 'awesome-typescript-loader?configFileName=' + atlConfigFile},
       {test: /\.(png|woff|woff2|ttf|eot)$/, loader: 'url-loader'},
       {test: /\.json$/, loader: 'json-loader'},
-      {test: /\.(scss|sass)$/, loaders: ['raw-loader', 'postcss-loader', 'sass-loader']},
+      {test: /\.(scss|sass)$/, loaders: ['to-string-loader', 'css-loader', 'sass-loader']},
       {test: /\.html$/, loader: 'raw-loader'}
     ]
   };
