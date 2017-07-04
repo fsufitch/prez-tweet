@@ -2,7 +2,10 @@
   "name": "preztweet-ui",
   "version": "1.0.0",
   "description": "",
-  "scripts": {},
+  "scripts": {
+    "webpack": "webpack",
+    "webpack:server": "webpack-dev-server"
+  },
   "dependencies": {
     "@angular/common": "^4.2.5",
     "@angular/compiler": "^4.0.3",

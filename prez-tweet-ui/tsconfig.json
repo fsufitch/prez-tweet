@@ -12,6 +12,7 @@
         "outDir": "../dist/js/",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "typeRoots": ["../node_modules/@types"]
     }
 }

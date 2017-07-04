@@ -8,6 +8,8 @@ var isProd = (ENV === 'prod') || isDeploy;
 var isDev = (ENV === 'dev') || (!isProd);
 var envText = isDeploy ? 'deploy' : isProd ? 'prod' : 'dev'
 
+console.log('Resolved build environment: '  + envText);
+
 // Webpack Plugins
 var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 var autoprefixer = require('autoprefixer');
@@ -35,9 +37,10 @@ module.exports = () => {
     extensions: ['.ts', '.js', '.json', '.css', '.scss', '.html'],
   };
 
+  var atlConfigFile = root('prez-tweet-ui', 'tsconfig.json');
   config.module = {
     rules: [
-      {test: /\.ts$/, loader: 'awesome-typescript-loader?configFileName=./prez-tweet-ui/tsconfig.json'},
+      {test: /\.ts$/, loader: 'awesome-typescript-loader?configFileName=' + atlConfigFile},
       {test: /\.(png|woff|woff2|ttf|eot)$/, loader: 'url-loader'},
       {test: /\.json$/, loader: 'json-loader'},
       {test: /\.(scss|sass)$/, loaders: ['raw-loader', 'postcss-loader', 'sass-loader']},
@@ -54,13 +57,13 @@ module.exports = () => {
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.UglifyJsPlugin({sourceMap: true, mangle: { keep_fnames: true }}),
     new HtmlWebpackPlugin({
-        template: './prez-tweet-ui/index.html',
-        chunksSortMode: 'dependency'
+        template: root('prez-tweet-ui', 'index.html'),
+        chunksSortMode: 'dependency',
       }),
   ];
 
   config.devServer = {
-    contentBase: './prez-tweet-ui/',
+    contentBase: root('prez-tweet-ui'),
     historyApiFallback: true,
     quiet: false,
     stats: 'normal', // none (or false), errors-only, minimal, normal (or true) and verbose
