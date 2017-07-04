@@ -3,6 +3,7 @@ package ui
 import (
 	"log"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/gorilla/mux"
 )
 
@@ -46,6 +47,7 @@ func applyProxyRoute(r *mux.Router, uiResURL string, resFile string, route strin
 
 	fullRoute := "/" + route
 	log.Println(fullRoute, "==>", resURL)
-	r.Handle(fullRoute, h)
+	gzHandler := gziphandler.GzipHandler(h)
+	r.Handle(fullRoute, gzHandler)
 	return nil
 }
