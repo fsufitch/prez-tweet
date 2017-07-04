@@ -7,7 +7,7 @@ import (
 )
 
 var uiJSFiles = []string{
-	"polyfills.bundle.js",
+	"polyfill.bundle.js",
 	"vendor.bundle.js",
 	"app.bundle.js",
 }
@@ -16,16 +16,18 @@ var uiIndexFile = "index.html"
 var uiIndexRoutes = []string{"", "index.htm", "index.html"}
 
 // ApplyUIProxyRoutes adds the UI file proxy routes to the router
-func ApplyUIProxyRoutes(r *mux.Router, uiResURL string) error {
+func ApplyUIProxyRoutes(r *mux.Router, apiHost string, uiResURL string) error {
 	for _, jsFile := range uiJSFiles {
-		err := applyProxyRoute(r, uiResURL, jsFile, jsFile)
+		err := applyProxyRoute(r, uiResURL, jsFile, jsFile, map[string]string{})
 		if err != nil {
 			return err
 		}
 	}
 
+	indexReplacements := map[string]string{}
+	indexReplacements["__API_HOST__"] = apiHost
 	for _, indexRoute := range uiIndexRoutes {
-		err := applyProxyRoute(r, uiResURL, uiIndexFile, indexRoute)
+		err := applyProxyRoute(r, uiResURL, uiIndexFile, indexRoute, indexReplacements)
 		if err != nil {
 			return err
 		}
@@ -33,9 +35,11 @@ func ApplyUIProxyRoutes(r *mux.Router, uiResURL string) error {
 	return nil
 }
 
-func applyProxyRoute(r *mux.Router, uiResURL string, resFile string, route string) error {
+func applyProxyRoute(r *mux.Router, uiResURL string, resFile string, route string,
+	contentReplacements map[string]string,
+) error {
 	resURL := uiResURL + "/" + resFile
-	h, err := NewProxyHandler(resURL)
+	h, err := NewProxyHandler(resURL, contentReplacements)
 	if err != nil {
 		return err
 	}

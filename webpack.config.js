@@ -1,3 +1,5 @@
+// Based on https://github.com/preboot/angular-webpack/blob/master/webpack.config.js
+
 // Helper: root() is defined at the bottom
 var path = require('path');
 var webpack = require('webpack');
@@ -26,11 +28,13 @@ module.exports = () => {
 
   config.entry = {
     app: './prez-tweet-ui/main.ts',
+    polyfill: './prez-tweet-ui/polyfill.ts',
+    vendor: './prez-tweet-ui/vendor.ts',
   };
 
   config.output = {
-    path: root('dist'),
-    filename: '[name].' + envText + '.bundle.js',
+    path: root('dist', envText),
+    filename: '[name].bundle.js',
   };
 
   config.resolve = {
@@ -49,6 +53,9 @@ module.exports = () => {
   };
 
   config.plugins = [
+    new CommonsChunkPlugin({
+      name: ['vendor', 'polyfill'],
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         ENV: JSON.stringify(envText),
