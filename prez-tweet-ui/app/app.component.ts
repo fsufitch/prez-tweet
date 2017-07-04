@@ -9,10 +9,4 @@ import { Component, ViewEncapsulation } from '@angular/core';
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class AppComponent {
-  ngOnInit() {
-    let twitterWidgetsScript = document.createElement('script');
-    twitterWidgetsScript.setAttribute('src', '//platform.twitter.com/widgets.js');
-    document.querySelector('body').appendChild(twitterWidgetsScript);
-  }
-}
+export class AppComponent {}

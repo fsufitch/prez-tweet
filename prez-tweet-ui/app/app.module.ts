@@ -4,6 +4,7 @@ import { HttpModule } from '@angular/http'
 
 import { AppComponent } from './app.component';
 import { AppStatusComponent, AppStatusService } from './status';
+import { TweetComponent } from './tweet';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import { AppStatusComponent, AppStatusService } from './status';
 
   declarations: [
     AppComponent,
-    AppStatusComponent
+    AppStatusComponent,
+    TweetComponent,
   ],
 
   providers: [
