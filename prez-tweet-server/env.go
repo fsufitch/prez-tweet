@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-var apiHost, jsBundleURL, herokuAppName, twitterAPIToken string
+var apiHost, uiResURL, herokuAppName, twitterAPIToken string
 var webPort int
 
 func initEnv() (err error) {
@@ -20,9 +20,9 @@ func initEnv() (err error) {
 		err = nil
 	}
 
-	jsBundleURL = os.Getenv("JS_BUNDLE")
-	if jsBundleURL == "" {
-		return errors.New("Could not determing JS bundle URL")
+	uiResURL = os.Getenv("UI_RES_URL")
+	if uiResURL == "" {
+		return errors.New("Could not determine UI resources URL")
 	}
 
 	herokuAppName = os.Getenv("HEROKU_APP_NAME")

@@ -9,29 +9,35 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func createRoutes() *mux.Router {
+func createRoutes() (*mux.Router, error) {
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 
-	router.Handle("/", ui.Handler{
-		APIHost:  apiHost,
-		JSBundle: jsBundleURL,
-	})
+	err := ui.ApplyUIProxyRoutes(router, uiResURL)
+	if err != nil {
+		return nil, err
+	}
 
 	api := router.PathPrefix("/api").Subrouter()
-	api.Handle("/status", status.NewHandler(apiHost, jsBundleURL))
+	api.Handle("/status", status.NewHandler(apiHost, uiResURL))
 
-	return router
+	return router, nil
 }
 
 // StartServer starts the prez-tweet server
 func StartServer() (err error) {
 	err = initEnv()
 	if err != nil {
-		return err
+		return
 	}
+	router, err := createRoutes()
+	if err != nil {
+		return
+	}
+
 	serveAddress := getServeAddress()
 	log.Println("Serving... " + serveAddress)
-	err = http.ListenAndServe(getServeAddress(), createRoutes())
+
+	err = http.ListenAndServe(serveAddress, router)
 	return
 }
