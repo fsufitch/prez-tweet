@@ -16,3 +16,6 @@ window.twttr = (function(d, s, id) {
 
   return t;
 }(document, "script", "twitter-wjs"));
+
+let twttr = window.twttr;
+export = twttr;

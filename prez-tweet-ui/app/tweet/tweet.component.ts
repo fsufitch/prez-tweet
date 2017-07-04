@@ -1,6 +1,7 @@
 import { Component, Input, ElementRef, OnChanges } from '@angular/core';
-
 import { BehaviorSubject } from 'rxjs';
+
+import { TwttrService } from '../twttr';
 
 @Component({
   selector: 'tweet',
@@ -10,7 +11,10 @@ export class TweetComponent implements OnChanges {
   @Input() idStr: string;
   private tweetReady = false;
 
-  constructor(private element: ElementRef) {}
+  constructor(
+    private element: ElementRef,
+    private twttrService: TwttrService
+  ) {}
 
   private idStr$ = new BehaviorSubject<string>('');
   ngOnChanges() {
@@ -25,10 +29,10 @@ export class TweetComponent implements OnChanges {
         el.removeChild(el.children[0]);
       }
 
-      window.twttr.ready(() => {
-        window.twttr.widgets.createTweet(this.idStr, el, {align: 'center'})
+      this.twttrService.runWithTwttr((twttr) => {
+        twttr.widgets.createTweet(this.idStr, el, {align: 'center'})
           .then(() => this.tweetReady = true);
-      })
+      });
     });
 
   tweetUrl$ = this.idStr$.asObservable()

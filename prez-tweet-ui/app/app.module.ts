@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http'
 import { AppComponent } from './app.component';
 import { AppStatusComponent, AppStatusService } from './status';
 import { TweetComponent } from './tweet';
+import { TwttrService } from './twttr';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { TweetComponent } from './tweet';
 
   providers: [
     AppStatusService,
+    TwttrService,
   ],
 
   bootstrap: [AppComponent]

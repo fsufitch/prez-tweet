@@ -1,18 +1,29 @@
 {
-    "compilerOptions": {
-        "lib": ["es2015", "dom"],
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "target": "ES5",
-        "baseUrl": ".",
-        "noImplicitAny": true,
-        "removeComments": true,
-        "preserveConstEnums": true,
-        "sourceMap": true,
-        "outDir": "../dist/js/",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "skipLibCheck": true,
-        "typeRoots": ["../node_modules/@types"]
-    }
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es6",
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+
+    "baseUrl": ".",
+    "outDir": "../dist/js/",
+
+    "typeRoots": ["../node_modules/@types"]
+  },
+  "awesomeTypescriptLoaderOptions": {
+    "useBabel": true,
+    "babelOptions": {
+      "sourceMaps": true,
+      "presets": ["latest"]
+    },
+    "forkChecker": true,
+    "useWebpackText": true
+  },
+  "atom": { "rewriteTsconfig": false }
 }

@@ -12,4 +12,6 @@ interface Twttr {
   [key: string]: any;
 }
 
-interface Window { twttr: Twttr }
+interface Window {
+  twttr: Twttr;
+}
