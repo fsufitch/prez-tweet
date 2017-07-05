@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/model"
 )
@@ -17,6 +18,9 @@ func InsertTweet(tx *sql.Tx, tw model.DBTweet) error {
 
 // GetTweetsFromIDs recovers any tweets available for the given IDs
 func GetTweetsFromIDs(tx *sql.Tx, StrIDs []string) (tweetMap map[string]model.DBTweet, err error) {
+	if len(StrIDs) == 0 {
+		return map[string]model.DBTweet{}, nil
+	}
 	queryArgsStr, iArgs := stringQueryArgsList(StrIDs)
 
 	rows, err := tx.Query(`
@@ -40,6 +44,9 @@ func GetTweetsFromIDs(tx *sql.Tx, StrIDs []string) (tweetMap map[string]model.DB
 
 // GetMostRecentTweet recovers the most recent tweet for a given presidential author
 func GetMostRecentTweet(tx *sql.Tx, author model.TweetAuthor) (t model.DBTweet, err error) {
+	if len(author.ScreenNames) == 0 {
+		return model.DBTweet{}, fmt.Errorf("Author has no screen names: %v", author)
+	}
 	queryArgsStr, iArgs := stringQueryArgsList(author.ScreenNames)
 	row := tx.QueryRow(`
 		SELECT t.tweet_id_str, t.screen_name, t.created_at, t.body
