@@ -2,7 +2,10 @@
   <h1 class="title"> Hello, world! </h1>
 </div>
 <div class="content">
-  <tweet idStr="881281755017355264"></tweet>
+  <div class="compared-tweets">
+    <tweet [idStr]="obamaTweetID$ | async"></tweet>
+    <tweet [idStr]="trumpTweetID$ | async"></tweet>
+  </div>
   <app-status></app-status>
 </div>
 <div class="footer">

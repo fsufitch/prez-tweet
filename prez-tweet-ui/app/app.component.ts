@@ -1,5 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 
+import { TweetService } from './tweet';
 
 @Component({
   selector: 'ng2app',
@@ -9,4 +10,9 @@ import { Component, ViewEncapsulation } from '@angular/core';
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private tweetService: TweetService) {}
+
+  obamaTweetID$ = this.tweetService.getObamaTweetID();
+  trumpTweetID$ = this.tweetService.getTrumpTweetID();
+}

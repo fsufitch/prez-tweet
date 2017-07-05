@@ -58,5 +58,6 @@ typings/
 .env
 
 # Custom stuff
+.awcache
 dist/
 vendor/

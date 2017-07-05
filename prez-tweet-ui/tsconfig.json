@@ -11,12 +11,13 @@
     "sourceMap": true,
     "skipLibCheck": true,
 
-    "baseUrl": ".",
+    "baseUrl": "..",
     "outDir": "../dist/js/",
 
     "typeRoots": ["../node_modules/@types"]
   },
   "awesomeTypescriptLoaderOptions": {
+    "useCache": true,
     "useBabel": true,
     "babelOptions": {
       "sourceMaps": true,
