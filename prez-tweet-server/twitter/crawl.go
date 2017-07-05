@@ -74,6 +74,7 @@ func crawlScreenNameTweets(screenName string) (err error) {
 			tx.Rollback()
 			return
 		}
+		log.Println("Found tweets in DB", len(dbTweetMap))
 		tweets = filterTweets(tweets, func(t twitter.Tweet) bool {
 			_, found := dbTweetMap[t.IDStr]
 			return !found
@@ -108,7 +109,7 @@ func crawlScreenNameTweets(screenName string) (err error) {
 		}
 	}
 
-	log.Println("Committing")
+	log.Printf("Committing scrape of @%s", screenName)
 	err = tx.Commit()
 	return
 }

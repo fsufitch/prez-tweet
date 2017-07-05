@@ -25,6 +25,7 @@ func createRoutes() (*mux.Router, error) {
 
 	api := router.PathPrefix("/api").Subrouter()
 	api.Handle("/status", status.NewHandler(apiHost, uiResURL))
+	api.Handle("/latest", twitter.LatestTweetsHandler{})
 
 	return router, nil
 }
