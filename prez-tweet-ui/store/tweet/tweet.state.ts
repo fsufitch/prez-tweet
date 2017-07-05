@@ -19,7 +19,7 @@ export const DEFAULT_TWEET_STATE = {
 
 export class TweetState extends Record(DEFAULT_TWEET_STATE) {}
 
-export var tweetReducer: ActionReducer<TweetState> = (state: TweetState=new TweetState(), action: Action) => {
+export const tweetReducer: ActionReducer<TweetState> = (state: TweetState=new TweetState(), action: Action) => {
   switch (action.type) {
     case SetObamaTweetIDAction.type: {
       let tweetID = (<SetObamaTweetIDAction>action).payload.tweetID;

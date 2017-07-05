@@ -9,6 +9,6 @@ import { AppStatusService } from './status.service';
 export class AppStatusComponent {
   constructor(private statusService: AppStatusService) {}
   private status$ = this.statusService.getAppStatus();
-  ok$ = this.status$.map(s => s.up);
-  uptime$ = this.status$.map(s => s.uptime + '');
+  ok$ = this.status$.map(s => s.ok);
+  uptime$ = this.status$.map(s => s.uptimeSec + '');
 }
