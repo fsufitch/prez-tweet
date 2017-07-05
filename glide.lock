@@ -1,10 +1,40 @@
-hash: 414223d4160ef57a12a6bc13bd190a72ef50b87ca613e7870cafd3316c0039eb
-updated: 2017-07-04T15:01:33.043649-04:00
+hash: 45ecc88aeb22ed2ef1c16dd85ae2f427927334b420acc22bc0a29903eee8bdec
+updated: 2017-07-04T21:31:08.1549302-04:00
 imports:
+- name: github.com/cenkalti/backoff
+  version: 5d150e7eec023ce7a124856b37c68e54b4050ac7
+- name: github.com/dghubble/go-twitter
+  version: d7141a7cba567120d53d0a136fce068864b43f8c
+  subpackages:
+  - twitter
+- name: github.com/dghubble/oauth1
+  version: 70562a5920ad9b6ff03ef697c0f90ae569abbd2b
+- name: github.com/dghubble/sling
+  version: 80ec33c6152a53edb5545864ca37567b506c4ca5
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
   version: bcd8bc72b08df0f70df986b97f95590779502d31
+- name: github.com/lib/pq
+  version: 8837942c3e09574accbc5f150e2c5e057189cace
+  subpackages:
+  - oid
 - name: github.com/NYTimes/gziphandler
   version: 56545f4a5d46df9a6648819d1664c3a03a13ffdb
+- name: github.com/pquerna/cachecontrol
+  version: 9299cc36e57c32f83e47ffb3c25d8a3dec10ea0b
+  subpackages:
+  - cacheobject
+- name: github.com/pressly/goose
+  version: a0e07f5e126b5c73e319912ac33121e5e06fc562
+- name: golang.org/x/net
+  version: 570fa1c91359c1869590e9cedf3b53162a51a167
+  subpackages:
+  - context
+- name: golang.org/x/oauth2
+  version: cce311a261e6fcf29de72ca96827bdb0b7d9c9e6
 testImports: []

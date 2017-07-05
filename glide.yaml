@@ -3,3 +3,15 @@ import:
 - package: github.com/gorilla/mux
   version: ^1.4.0
 - package: github.com/NYTimes/gziphandler
+- package: github.com/pquerna/cachecontrol
+  subpackages:
+  - cacheobject
+- package: github.com/dghubble/go-twitter
+  subpackages:
+  - twitter
+- package: golang.org/x/oauth2
+- package: github.com/lib/pq
+- package: github.com/pressly/goose
+  version: ^2.0.0
+- package: github.com/dghubble/oauth1
+  version: ^0.4.0

@@ -4,10 +4,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/fsufitch/prez-tweet/prez-tweet-server/db"
+	"github.com/fsufitch/prez-tweet/prez-tweet-server/model"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/status"
+	"github.com/fsufitch/prez-tweet/prez-tweet-server/twitter"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/ui"
 	"github.com/gorilla/mux"
 )
+
+var defaultCrawlAuthors = []model.TweetAuthor{model.Obama, model.Trump}
 
 func createRoutes() (*mux.Router, error) {
 	router := mux.NewRouter()
@@ -30,6 +35,17 @@ func StartServer() (err error) {
 	if err != nil {
 		return
 	}
+
+	err = db.RunMigrations()
+	if err != nil {
+		return
+	}
+
+	err = runInitialCrawl()
+	if err != nil {
+		return
+	}
+
 	router, err := createRoutes()
 	if err != nil {
 		return
@@ -39,5 +55,21 @@ func StartServer() (err error) {
 	log.Println("Serving... " + serveAddress)
 
 	err = http.ListenAndServe(serveAddress, router)
+	return
+}
+
+func runInitialCrawl() (err error) {
+	crawlAuthors := defaultCrawlAuthors
+	done := make(chan error)
+	for _, author := range crawlAuthors {
+		go twitter.CrawlAuthorTweets(author, done)
+	}
+	for _ = range crawlAuthors {
+		err = <-done
+		if err != nil {
+			return
+		}
+	}
+	close(done)
 	return
 }

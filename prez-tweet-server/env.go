@@ -6,13 +6,30 @@ import (
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/fsufitch/prez-tweet/prez-tweet-server/db"
+	"github.com/fsufitch/prez-tweet/prez-tweet-server/twitter"
 )
 
-var apiHost, uiResURL, herokuAppName, twitterAPIToken string
+var apiHost, uiResURL, herokuAppName, twitterAPIToken, dbURL string
 var webPort int
 
 func initEnv() (err error) {
-	twitterAPIToken = os.Getenv("TWITTER_TOKEN")
+	twitterAPIToken = os.Getenv("TWITTER_AUTH")
+	if twitterAPIToken == "" {
+		return errors.New("Could not determine Twitter authentication string")
+	}
+	twitter.CreateClient(twitterAPIToken)
+
+	dbURL = os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		return errors.New("Could not determine database URL")
+	}
+	err = db.CreateConnection(dbURL)
+	if err != nil {
+		return
+	}
+
 	webPort, err = strconv.Atoi(os.Getenv("PORT"))
 	if err != nil || webPort == 0 {
 		log.Println("PORT not set, using default")
