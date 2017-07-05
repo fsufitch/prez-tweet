@@ -8,6 +8,7 @@ import (
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/db"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/model"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/status"
+	"github.com/fsufitch/prez-tweet/prez-tweet-server/tweetpair"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/twitter"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/ui"
 	"github.com/gorilla/mux"
@@ -25,8 +26,10 @@ func createRoutes() (*mux.Router, error) {
 	}
 
 	api := router.PathPrefix("/api").Subrouter()
+	api.StrictSlash(true)
 	api.Handle("/status", status.NewHandler(apiHost, uiResURL))
 	api.Handle("/latest", twitter.LatestTweetsHandler{})
+	tweetpair.RegisterTweetPairRoutes(api.PathPrefix("/pair").Subrouter())
 
 	return router, nil
 }

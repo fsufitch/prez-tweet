@@ -2,13 +2,16 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server"
 )
 
 func main() {
+	rand.Seed(time.Now().Unix())
 	interruptChan := make(chan os.Signal)
 	signal.Notify(interruptChan, os.Interrupt)
 
