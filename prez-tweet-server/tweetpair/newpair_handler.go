@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/db"
-	"github.com/fsufitch/r9kd/server/util"
+	"github.com/fsufitch/prez-tweet/prez-tweet-server/util"
 )
 
 type newPairHandlerRequest struct {
