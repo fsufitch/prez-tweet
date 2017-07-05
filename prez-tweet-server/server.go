@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/db"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/model"
@@ -42,10 +43,11 @@ func StartServer() (err error) {
 		return
 	}
 
-	err = runInitialCrawl()
+	err = runCrawl()
 	if err != nil {
 		return
 	}
+	go runRepeatCrawls(10 * time.Minute)
 
 	router, err := createRoutes()
 	if err != nil {
@@ -59,7 +61,7 @@ func StartServer() (err error) {
 	return
 }
 
-func runInitialCrawl() (err error) {
+func runCrawl() (err error) {
 	crawlAuthors := defaultCrawlAuthors
 	done := make(chan error)
 	for _, author := range crawlAuthors {
@@ -73,4 +75,11 @@ func runInitialCrawl() (err error) {
 	}
 	close(done)
 	return
+}
+
+func runRepeatCrawls(delay time.Duration) {
+	for {
+		time.Sleep(delay)
+		runCrawl()
+	}
 }
