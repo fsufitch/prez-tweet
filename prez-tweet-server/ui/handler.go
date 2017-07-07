@@ -15,7 +15,7 @@ type ProxyHandler struct {
 // NewProxyHandler creates a new proxy handler for the data at the given URL
 func NewProxyHandler(proxyURL string, contentReplacements map[string]string) (*ProxyHandler, error) {
 	response, err := http.Get(proxyURL)
-	if response.StatusCode != http.StatusOK {
+	if err == nil && response.StatusCode != http.StatusOK {
 		err = fmt.Errorf("Error setting up proxy for `%s`: %s", proxyURL, response.Status)
 	}
 	if err != nil {

@@ -39,15 +39,26 @@ module.exports = () => {
 
   config.resolve = {
     extensions: ['.ts', '.js', '.json', '.css', '.scss', '.html'],
+    alias: [{
+      alias: 'jquery',
+      name: 'jquery/src/jquery',
+    }],
   };
 
   var atlConfigFile = root('prez-tweet-ui', 'tsconfig.json');
   config.module = {
     rules: [
+      {test: require.resolve("jquery"), loaders: ["expose-loader?$", "expose-loader?jQuery"] },
       {test: /\.ts$/, loader: 'awesome-typescript-loader?configFileName=' + atlConfigFile},
       {test: /\.(png|woff|woff2|ttf|eot)$/, loader: 'url-loader'},
       {test: /\.json$/, loader: 'json-loader'},
-      {test: /\.(scss|sass)$/, loaders: ['to-string-loader', 'css-loader', 'sass-loader']},
+      {test: /\.(scss|sass)$/,
+        loaders: [
+          'to-string-loader',
+          'postcss-loader',
+          'sass-loader',
+        ],
+      },
       {test: /\.html$/, loader: 'raw-loader'}
     ]
   };
@@ -55,6 +66,18 @@ module.exports = () => {
   config.plugins = [
     new CommonsChunkPlugin({
       name: ['vendor', 'polyfill'],
+    }),
+    new webpack.ProvidePlugin({
+      jQuery: 'jquery',
+      $: 'jquery',
+      jquery: 'jquery',
+    }),
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        postcss: [
+          require('autoprefixer')(),
+        ]
+      }
     }),
     new webpack.DefinePlugin({
       'process.env': {
@@ -64,9 +87,9 @@ module.exports = () => {
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.UglifyJsPlugin({sourceMap: true, mangle: { keep_fnames: true }}),
     new HtmlWebpackPlugin({
-        template: root('prez-tweet-ui', 'index.html'),
-        chunksSortMode: 'dependency',
-      }),
+      template: root('prez-tweet-ui', 'index.html'),
+      chunksSortMode: 'dependency',
+    }),
   ];
 
   config.devServer = {

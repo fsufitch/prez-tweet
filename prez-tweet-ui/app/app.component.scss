@@ -1,7 +1,9 @@
+
 html, body {
   width: 100%;
   height: 100%;
   margin: 0;
+  font-family: 'Roboto', sans-serif;
 }
 
 ng2app {
@@ -12,12 +14,6 @@ ng2app {
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: stretch;
-
-  .header {
-    flex-flow: row nowrap;
-    justify-content: center;
-    padding: 10px;
-  }
 
   .content {
     flex-flow: column nowrap;
@@ -32,17 +28,8 @@ ng2app {
       justify-content: space-around;
     }
   }
-
-  .footer {
-    height: 1em;
-    padding: 0.25em;
-  }
 }
 
 div.header, div.footer {
   background: #cbcbcb;
-}
-
-.title {
-  color: blue;
 }

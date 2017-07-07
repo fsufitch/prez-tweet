@@ -1,13 +1,8 @@
-<div class="header">
-  <h1 class="title"> Hello, world! </h1>
-</div>
+<appheader></appheader>
 <div class="content">
   <div class="compared-tweets">
     <tweet [idStr]="obamaTweetID$ | async"></tweet>
     <tweet [idStr]="trumpTweetID$ | async"></tweet>
   </div>
-  <app-status></app-status>
 </div>
-<div class="footer">
-  footer
-</div>
+<appfooter></appfooter>

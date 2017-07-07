@@ -5,6 +5,8 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
 import { AppComponent } from './app.component';
+import { FooterComponent } from './footer';
+import { HeaderComponent } from './header';
 import { AppStatusComponent, AppStatusService } from './status';
 import { TweetComponent, TweetService } from './tweet';
 import { TwttrService } from './twttr';
@@ -24,6 +26,8 @@ import { API_EFFECTS } from '../api';
     AppComponent,
     AppStatusComponent,
     TweetComponent,
+    HeaderComponent,
+    FooterComponent,
   ],
 
   providers: [

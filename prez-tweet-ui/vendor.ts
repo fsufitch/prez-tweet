@@ -12,3 +12,7 @@ import '@ngrx/store';
 import '@ngrx/effects';
 import '@ngrx/core/add/operator/select'
 import 'rxjs/Rx';
+
+import 'jquery';
+import 'bootstrap-sass';
+require('style-loader!./vendor-styles.scss');
