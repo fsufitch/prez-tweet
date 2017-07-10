@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/db"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/twitter"
@@ -13,6 +14,7 @@ import (
 
 var apiHost, uiResURL, herokuAppName, twitterAPIToken, dbURL string
 var webPort int
+var proxyCacheTTL time.Duration
 
 func initEnv() (err error) {
 	twitterAPIToken = os.Getenv("TWITTER_AUTH")
@@ -31,7 +33,7 @@ func initEnv() (err error) {
 	}
 
 	webPort, err = strconv.Atoi(os.Getenv("PORT"))
-	if err != nil || webPort == 0 {
+	if err != nil {
 		log.Println("PORT not set, using default")
 		webPort = 8080
 		err = nil
@@ -52,6 +54,16 @@ func initEnv() (err error) {
 		apiHost = herokuAppName + ".herokuapp.com"
 		log.Println("API_HOST not set, using default: " + apiHost)
 	}
+
+	ttlStr := os.Getenv("PROXY_CACHE_TTL")
+	if ttlStr == "" {
+		return errors.New("Could not determine proxy cache TTL")
+	}
+	ttlInt, err := strconv.Atoi(ttlStr)
+	if err != nil {
+		return
+	}
+	proxyCacheTTL = time.Duration(ttlInt) * time.Second
 
 	return
 }

@@ -13,3 +13,7 @@ set API_HOST=localhost:8080
 
 :: Postgres database URL
 set DATABASE_URL=postgres://preztweet:preztweet-dev@localhost:5432/preztweet?sslmode=disable
+
+:: Proxy cache TTL, in seconds; 0 for UI development, 600 otherwise
+set PROXY_CACHE_TTL=0
+::set PROXY_CACHE_TTL=600
