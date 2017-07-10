@@ -5,7 +5,7 @@ import { compose } from '@ngrx/core/compose';
 
 import { Observable } from 'rxjs';
 
-import { RootState, selectStatusState, selectStatus } from '../../store';
+import { RootState, RootSelectors, StatusSelectors } from '../../store';
 
 @Injectable()
 export class AppStatusService {
@@ -13,8 +13,8 @@ export class AppStatusService {
 
   getAppStatus() {
     return this.store.let(compose(
-      selectStatus(),
-      selectStatusState()
+      StatusSelectors.selectStatus(),
+      RootSelectors.selectStatusState()
     ));
   }
 }

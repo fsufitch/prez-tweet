@@ -11,7 +11,7 @@ import {
   SetTrumpTweetIDAction,
 } from '../store';
 
-import './constants';
+import '../common';
 
 interface UpdateLatestTweetsResponseData {
   obama_tweet_id_str: string,

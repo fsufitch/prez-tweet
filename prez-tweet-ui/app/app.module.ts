@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http'
-import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
 import { AppComponent } from './app.component';
@@ -12,14 +11,14 @@ import { TweetComponent, TweetService } from './tweet';
 import { TwttrService } from './twttr';
 import { ControlsModule } from './controls';
 
-import { rootReducers, DEFAULT_ROOT_STATE } from '../store';
+import { StoreModule } from '../store';
 import { API_EFFECTS } from '../api';
 
 @NgModule({
   imports: [
     BrowserModule,
     HttpModule,
-    StoreModule.provideStore(rootReducers, DEFAULT_ROOT_STATE),
+    StoreModule,
     ...API_EFFECTS.map(e => EffectsModule.runAfterBootstrap(e)),
     ControlsModule,
   ],

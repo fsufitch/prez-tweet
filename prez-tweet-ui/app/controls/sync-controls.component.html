@@ -5,10 +5,12 @@
 <form class="navbar-form">
   <div class="form-group">
     <div class="btn-group" role="group" aria-label="Offset">
-      <button type="button" class="btn btn-secondary">8 years</button>
-      <button type="button" class="btn btn-secondary">4 years</button>
-      <button type="button" class="btn btn-secondary">1 year</button>
-      <button type="button" class="btn btn-secondary active">None</button>
+      <button type="button" class="btn btn-secondary"
+        *ngFor="let offsetKey of orderedOffsetKeys"
+        [class.active]="offsetKey===(activeOffsetKey$ | async)"
+        (click)="offsetClicked(offsetKey)">
+        {{offsetMap[offsetKey].text}}
+      </button>
     </div>
   </div>
 </form>

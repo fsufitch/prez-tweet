@@ -5,9 +5,8 @@ import { Store } from '@ngrx/store';
 
 import {
   RootState,
-  selectObamaTweetID,
-  selectTrumpTweetID,
-  selectTweetState,
+  RootSelectors,
+  TweetSelectors,
 } from '../../store';
 
 @Injectable()
@@ -16,15 +15,15 @@ export class TweetService {
 
  getTrumpTweetID() {
    return compose(
-     selectTrumpTweetID(),
-     selectTweetState()
+     TweetSelectors.selectTrumpTweetID(),
+     RootSelectors.selectTweetState()
    )(this.store);
  }
 
  getObamaTweetID() {
    return compose(
-     selectObamaTweetID(),
-     selectTweetState()
+     TweetSelectors.selectObamaTweetID(),
+     RootSelectors.selectTweetState()
    )(this.store);
  }
 }

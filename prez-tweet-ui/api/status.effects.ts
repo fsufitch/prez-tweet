@@ -10,7 +10,7 @@ import {
   SetStatusAction,
 } from '../store';
 
-import './constants';
+import '../common';
 
 interface UpdateStatusResponseData {
   api: string,

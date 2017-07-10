@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { ControlMode } from './constants';
+import { ControlMode } from '../../common';
 import { SyncControlsComponent } from './sync-controls.component';
 
 @Component({
