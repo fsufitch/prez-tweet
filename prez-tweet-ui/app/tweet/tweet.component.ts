@@ -1,7 +1,7 @@
 import { Component, Input, ElementRef, OnChanges } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-import { TwttrService } from '../twttr';
+import { TwttrService } from '../shared';
 
 @Component({
   selector: 'tweet',

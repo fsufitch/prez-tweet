@@ -6,13 +6,13 @@ import { EffectsModule } from '@ngrx/effects';
 import { AppComponent } from './app.component';
 import { FooterComponent } from './footer';
 import { HeaderComponent } from './header';
-import { AppStatusComponent, AppStatusService } from './status';
-import { TweetComponent, TweetService } from './tweet';
-import { TwttrService } from './twttr';
+import { AppStatusComponent } from './status';
+import { TweetComponent } from './tweet';
 import { ControlsModule } from './controls';
 
 import { StoreModule } from '../store';
 import { API_EFFECTS } from '../api';
+import { SERVICES } from './shared';
 
 @NgModule({
   imports: [
@@ -32,9 +32,7 @@ import { API_EFFECTS } from '../api';
   ],
 
   providers: [
-    AppStatusService,
-    TweetService,
-    TwttrService,
+    ...SERVICES,
   ],
 
   bootstrap: [AppComponent]

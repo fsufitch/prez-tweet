@@ -1,7 +1,7 @@
 
 import { Component, ViewEncapsulation } from '@angular/core';
 
-import { TweetService } from './tweet';
+import { TweetService } from './shared';
 
 @Component({
   selector: 'ng2app',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { AppStatusService } from './status.service';
+import { AppStatusService } from '../shared';
 
 @Component({
   selector: 'app-status',

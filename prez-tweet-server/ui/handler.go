@@ -31,11 +31,7 @@ func NewProxyHandler(apiHost string, target string, cacheTTL time.Duration) *Pro
 }
 
 func (h ProxyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	filename, ok := mux.Vars(r)["filename"]
-	if !ok {
-		util.WriteHTTPErrorResponse(w, 500, "No filename from URL, this should be impossible")
-		return
-	}
+	filename, _ := mux.Vars(r)["filename"]
 
 	if filename == "" {
 		filename = "index.html"
@@ -106,8 +102,9 @@ func (h ProxyHandler) fetchProxiedFile(filename string) (data []byte, contentTyp
 
 // ApplyUIProxyRoutes adds the UI file proxy routes to the router
 func ApplyUIProxyRoutes(r *mux.Router, apiHost string, uiResURL string, cacheTTL time.Duration) error {
-	h := NewProxyHandler(apiHost, uiResURL, cacheTTL)
-	r.Handle("/{filename}", gziphandler.GzipHandler(h)).Methods("GET")
+	h := gziphandler.GzipHandler(NewProxyHandler(apiHost, uiResURL, cacheTTL))
+	r.Handle("/{filename}", h).Methods("GET")
+	r.Handle("/", h).Methods("GET")
 
 	return nil
 }

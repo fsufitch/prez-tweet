@@ -20,4 +20,12 @@ export class SyncControlsComponent {
   offsetClicked(offsetKey: DefaultOffsetKey) {
     this.controlsService.setSynchronizedOffset(offsetKey);
   }
+
+  olderClicked() {
+    this.controlsService.triggerSynchronizedOlder();
+  }
+
+  newerClicked() {
+    this.controlsService.triggerSynchronizedNewer();
+  }
 }
