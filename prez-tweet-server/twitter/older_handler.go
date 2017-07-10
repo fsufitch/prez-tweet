@@ -32,6 +32,7 @@ func (h OlderTweetsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tx, _ := db.NewTransaction()
+	defer tx.Rollback()
 	tweetMap, err := db.GetTweetsFromIDs(tx, []string{tweet1StrID, tweet2StrID})
 	if err != nil {
 		util.WriteHTTPErrorResponse(w, 500, err.Error())
