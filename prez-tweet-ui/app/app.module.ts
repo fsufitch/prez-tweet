@@ -10,6 +10,7 @@ import { HeaderComponent } from './header';
 import { AppStatusComponent, AppStatusService } from './status';
 import { TweetComponent, TweetService } from './tweet';
 import { TwttrService } from './twttr';
+import { ControlsModule } from './controls';
 
 import { rootReducers, DEFAULT_ROOT_STATE } from '../store';
 import { API_EFFECTS } from '../api';
@@ -20,6 +21,7 @@ import { API_EFFECTS } from '../api';
     HttpModule,
     StoreModule.provideStore(rootReducers, DEFAULT_ROOT_STATE),
     ...API_EFFECTS.map(e => EffectsModule.runAfterBootstrap(e)),
+    ControlsModule,
   ],
 
   declarations: [

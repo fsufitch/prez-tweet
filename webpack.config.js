@@ -50,12 +50,12 @@ module.exports = () => {
     rules: [
       {test: require.resolve("jquery"), loaders: ["expose-loader?$", "expose-loader?jQuery"] },
       {test: /\.ts$/, loader: 'awesome-typescript-loader?configFileName=' + atlConfigFile},
-      {test: /\.(png|woff|woff2|ttf|eot)$/, loader: 'url-loader'},
+      {test: /\.(png|jpg|svg|woff|woff2|ttf|eot)$/, loader: 'url-loader'},
       {test: /\.json$/, loader: 'json-loader'},
-      {test: /\.(scss|sass)$/,
+      {test: /\.(css|scss|sass)$/,
         loaders: [
           'to-string-loader',
-          'postcss-loader',
+          'css-loader',
           'sass-loader',
         ],
       },
@@ -85,12 +85,17 @@ module.exports = () => {
       }
     }),
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.optimize.UglifyJsPlugin({sourceMap: true, mangle: { keep_fnames: true }}),
     new HtmlWebpackPlugin({
       template: root('prez-tweet-ui', 'index.html'),
       chunksSortMode: 'dependency',
     }),
   ];
+
+  if (isProd) {
+    config.plugins.push(
+      new webpack.optimize.UglifyJsPlugin({sourceMap: true, mangle: { keep_fnames: true }})
+    );
+  }
 
   config.devServer = {
     contentBase: root('prez-tweet-ui'),
