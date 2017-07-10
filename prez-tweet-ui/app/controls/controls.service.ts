@@ -53,8 +53,8 @@ export class ControlsService {
       .subscribe(([trumpTweetID, obamaTweetID, syncOffsetYears]) => {
         this.store.dispatch(new UpdateSynchronizedOlderAction({
           offsetYears: syncOffsetYears,
-          currentTweet1StringID: trumpTweetID,
-          currentTweet2StringID: obamaTweetID,
+          obamaTweetStringID: trumpTweetID,
+          trumpTweetStringID: obamaTweetID,
         }));
       });
   }
@@ -71,8 +71,8 @@ export class ControlsService {
       .subscribe(([trumpTweetID, obamaTweetID, syncOffsetYears]) => {
         this.store.dispatch(new UpdateSynchronizedNewerAction({
           offsetYears: syncOffsetYears,
-          currentTweet1StringID: trumpTweetID,
-          currentTweet2StringID: obamaTweetID,
+          obamaTweetStringID: trumpTweetID,
+          trumpTweetStringID: obamaTweetID,
         }));
       });
   }

@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-func stringQueryArgsList(strArgs []string) (query string, iArgs []interface{}) {
+func stringQueryArgsList(strArgs []string, offset int) (query string, iArgs []interface{}) {
 	queryFields := []string{}
 	for i := range strArgs {
-		queryFields = append(queryFields, fmt.Sprintf("$%d", i+1))
+		queryFields = append(queryFields, fmt.Sprintf("$%d", i+1+offset))
 	}
 	query = strings.Join(queryFields, ", ")
 

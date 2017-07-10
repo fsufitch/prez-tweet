@@ -13,8 +13,8 @@ export class UpdateSynchronizedOlderAction implements Action {
   type = UpdateSynchronizedOlderAction.type;
   constructor(public payload: {
     offsetYears: number,
-    currentTweet1StringID: string,
-    currentTweet2StringID: string,
+    obamaTweetStringID: string,
+    trumpTweetStringID: string,
   }) {}
 }
 export class UpdateSynchronizedNewerAction implements Action {
@@ -22,7 +22,7 @@ export class UpdateSynchronizedNewerAction implements Action {
   type = UpdateSynchronizedNewerAction.type;
   constructor(public payload: {
     offsetYears: number,
-    currentTweet1StringID: string,
-    currentTweet2StringID: string,
+    obamaTweetStringID: string,
+    trumpTweetStringID: string,
   }) {}
 }

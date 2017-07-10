@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"math/rand"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/model"
@@ -113,7 +112,6 @@ func createUniqueShortID(tx *sql.Tx, length int) (shortID string, err error) {
 			buildID[i] = shortIDAlphabet[index]
 		}
 
-		log.Println("Trying", string(buildID), buildID)
 		_, err = GetTweetPairByShortID(tx, string(buildID))
 		if err == sql.ErrNoRows {
 			foundID = true

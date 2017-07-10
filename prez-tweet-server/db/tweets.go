@@ -21,7 +21,7 @@ func GetTweetsFromIDs(tx *sql.Tx, StrIDs []string) (tweetMap map[string]model.DB
 	if len(StrIDs) == 0 {
 		return map[string]model.DBTweet{}, nil
 	}
-	queryArgsStr, iArgs := stringQueryArgsList(StrIDs)
+	queryArgsStr, iArgs := stringQueryArgsList(StrIDs, 0)
 
 	rows, err := tx.Query(`
     SELECT t.tweet_id_str, t.screen_name, t.created_at, t.body
@@ -47,7 +47,7 @@ func GetMostRecentTweet(tx *sql.Tx, author model.TweetAuthor) (t model.DBTweet, 
 	if len(author.ScreenNames) == 0 {
 		return model.DBTweet{}, fmt.Errorf("Author has no screen names: %v", author)
 	}
-	queryArgsStr, iArgs := stringQueryArgsList(author.ScreenNames)
+	queryArgsStr, iArgs := stringQueryArgsList(author.ScreenNames, 0)
 	row := tx.QueryRow(`
 		SELECT t.tweet_id_str, t.screen_name, t.created_at, t.body
 		FROM tweets t
@@ -56,5 +56,50 @@ func GetMostRecentTweet(tx *sql.Tx, author model.TweetAuthor) (t model.DBTweet, 
 		LIMIT 1;
 	`, iArgs...)
 	err = row.Scan(&t.IDStr, &t.ScreenName, &t.CreatedAt, &t.Body)
+	return
+}
+
+// GetOlderTweet recovers the next oldest tweet by the same author
+func GetOlderTweet(tx *sql.Tx, tweet model.DBTweet, author model.TweetAuthor) (t model.DBTweet, err error) {
+	if len(author.ScreenNames) == 0 {
+		return model.DBTweet{}, fmt.Errorf("Author has no screen names: %v", author)
+	}
+
+	queryScreenNamesStr, iArgs := stringQueryArgsList(author.ScreenNames, 2)
+
+	row := tx.QueryRow(`
+    SELECT t.tweet_id_str, t.screen_name, t.created_at, t.body
+		FROM tweets t
+		WHERE t.created_at < $1
+      		AND t.tweet_id_str != $2
+				  AND t.screen_name IN (`+queryScreenNamesStr+`)
+		ORDER BY t.created_at DESC
+		LIMIT 1;
+
+	`, append([]interface{}{tweet.CreatedAt, tweet.IDStr}, iArgs...)...)
+	err = row.Scan(&t.IDStr, &t.ScreenName, &t.CreatedAt, &t.Body)
+
+	return
+}
+
+// GetNewerTweet recovers the next newest tweet by the same author
+func GetNewerTweet(tx *sql.Tx, tweet model.DBTweet, author model.TweetAuthor) (t model.DBTweet, err error) {
+	if len(author.ScreenNames) == 0 {
+		return model.DBTweet{}, fmt.Errorf("Author has no screen names: %v", author)
+	}
+
+	queryScreenNamesStr, iArgs := stringQueryArgsList(author.ScreenNames, 2)
+	row := tx.QueryRow(`
+    SELECT t.tweet_id_str, t.screen_name, t.created_at, t.body
+		FROM tweets t
+		WHERE t.created_at > $1
+	        AND t.tweet_id_str != $2
+				  AND t.screen_name IN (`+queryScreenNamesStr+`)
+		ORDER BY t.created_at ASC
+		LIMIT 1;
+
+	`, append([]interface{}{tweet.CreatedAt, tweet.IDStr}, iArgs...)...)
+	err = row.Scan(&t.IDStr, &t.ScreenName, &t.CreatedAt, &t.Body)
+
 	return
 }
