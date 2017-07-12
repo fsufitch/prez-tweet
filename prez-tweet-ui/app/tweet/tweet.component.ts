@@ -1,42 +1,44 @@
-import { Component, Input, ElementRef, OnChanges } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Component, Input, ElementRef, NgZone, OnChanges, ViewChild } from '@angular/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { TwttrService } from '../shared';
 
 @Component({
   selector: 'tweet',
   template: require('./tweet.component.html'),
+  styles: [require('./tweet.component.scss')],
 })
 export class TweetComponent implements OnChanges {
   @Input() idStr: string;
-  private tweetReady = false;
+  @ViewChild("tweetContainer") private tweetContainer: ElementRef;
+  private tweetElement: HTMLElement = null;
+  tweetReady: boolean;
 
   constructor(
-    private element: ElementRef,
-    private twttrService: TwttrService
+    private twttrService: TwttrService,
+    private zone: NgZone
   ) {}
 
-  private idStr$ = new BehaviorSubject<string>('');
   ngOnChanges() {
-    this.idStr$.next(this.idStr);
+    this.tweetReady = false;
+    this.updateTweet(this.idStr);
   }
 
-  private tweetUpdateSub = this.idStr$.asObservable()
-    .filter(id => !!id)
-    .subscribe(id => {
-      let el: HTMLElement = this.element.nativeElement;
-      while (el.children.length > 0) {
-        el.removeChild(el.children[0]);
-      }
+  private updateTweet(id: string) {
+    let container: HTMLDivElement = document.createElement("div");
 
-      this.twttrService.runWithTwttr((twttr) => {
-        twttr.widgets.createTweet(this.idStr, el, {align: 'center'})
-          .then(() => this.tweetReady = true);
-      });
-    });
+    this.twttrService.runWithTwttr((twttr) =>
+      twttr.widgets.createTweet(id, container, {align: 'center'})
+        .then(tweet => this.zone.run(() =>{
+          if (!!this.tweetElement) {
+            this.tweetElement.remove();
+          }
+          (<HTMLDivElement>this.tweetContainer.nativeElement).appendChild(tweet);
+          this.tweetElement = tweet;
+          this.tweetReady = true;
+        }))
+    );
+  }
 
-  tweetUrl$ = this.idStr$.asObservable()
-    .filter(id => !!id)
-    .map(id => `https://twitter.com/status/${id}`);
 
 }

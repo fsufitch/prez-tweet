@@ -50,7 +50,7 @@ module.exports = () => {
     rules: [
       {test: require.resolve("jquery"), loaders: ["expose-loader?$", "expose-loader?jQuery"] },
       {test: /\.ts$/, loader: 'awesome-typescript-loader?configFileName=' + atlConfigFile},
-      {test: /\.(png|jpg|svg|woff|woff2|ttf|eot)$/, loader: 'file-loader'},
+      {test: /\.(gif|png|jpg|svg|woff|woff2|ttf|eot)$/, loader: 'file-loader'},
       {test: /\.json$/, loader: 'json-loader'},
       {test: /\.(css|scss|sass)$/, loaders: ['to-string-loader', 'css-loader', 'sass-loader']},
       {test: /\.html$/, loader: 'html-loader'}

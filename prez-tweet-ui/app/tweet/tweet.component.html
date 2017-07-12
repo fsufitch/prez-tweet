@@ -1,4 +1,7 @@
-<div *ngIf="!tweetReady">
-  Loading tweet...
-  <a [attr.href]="tweetUrl$ | async">Open manually</a>
+<div class="tweet-wrapper">
+  <div *ngIf="!tweetReady" class="loading-overlay">
+    <img src="./loader.gif" />
+  </div>
+  <div #tweetContainer>
+  </div>
 </div>
