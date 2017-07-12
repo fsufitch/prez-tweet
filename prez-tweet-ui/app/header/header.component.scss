@@ -1,11 +1,22 @@
 .header-inner {
-  padding: 10px;
+  background: #811;
+  color: white;
+
+  padding-top: 25px;
+  padding-bottom: 25px;
+  padding-left: 20px;
+  padding-right: 20px;
   display: flex;
 
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 
+  img {
+    height: 64px;
+  }
+
   h1 {
-    margin: 0px;
+    flex: 1;
+    margin-left: 1em;
   }
 }
