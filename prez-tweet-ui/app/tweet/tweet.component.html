@@ -1,7 +1,7 @@
 <div class="tweet-wrapper">
-  <div *ngIf="!tweetReady" class="loading-overlay">
+  <div *ngIf="!(tweetReady$ | async)" class="loading-overlay">
     <img src="./loader.gif" />
   </div>
-  <div #tweetContainer>
+  <div #tweetContainer class="tweet-container">
   </div>
 </div>

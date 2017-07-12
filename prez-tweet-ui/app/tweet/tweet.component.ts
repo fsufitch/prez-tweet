@@ -11,8 +11,44 @@ import { TwttrService } from '../shared';
 export class TweetComponent implements OnChanges {
   @Input() idStr: string;
   @ViewChild("tweetContainer") private tweetContainer: ElementRef;
-  private tweetElement: HTMLElement = null;
-  tweetReady: boolean;
+  tweetReady$ = new BehaviorSubject(false);
+
+  private idStr$ = new BehaviorSubject<string>('');
+  private tweetElement$ = this.idStr$
+    .do(() => this.tweetReady$.next(false))
+    .switchMap(id => {
+      if (!id) {
+        return Observable.of<HTMLElement>(null);
+      }
+      let result = new Subject<HTMLElement>();
+      this.twttrService.runWithTwttr((twttr) => {
+        twttr.widgets.createTweet(id, this.tweetContainer.nativeElement, {})
+          .then(tweet => {
+            console.log('got tweet', tweet)
+            this.zone.run(() => result.next(tweet));
+          });
+        });
+      return result;
+    });
+
+  private currentTweetSubscription  = this.tweetElement$
+    .pairwise()
+    .map(([prev, curr]) => {
+      console.log(prev, curr);
+      if (!!prev) {
+        prev.parentNode.replaceChild(curr, prev);
+        return true;
+      } else if (!!curr) {
+        this.tweetContainer.nativeElement.appendChild(curr);
+        return true;
+      }
+      return false;
+    })
+    .filter(success => success)
+    .subscribe(() => {
+          this.tweetReady$.next(true);
+    });
+
 
   constructor(
     private twttrService: TwttrService,
@@ -20,25 +56,6 @@ export class TweetComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.tweetReady = false;
-    this.updateTweet(this.idStr);
+    this.idStr$.next(this.idStr);
   }
-
-  private updateTweet(id: string) {
-    let container: HTMLDivElement = document.createElement("div");
-
-    this.twttrService.runWithTwttr((twttr) =>
-      twttr.widgets.createTweet(id, container, {align: 'center'})
-        .then(tweet => this.zone.run(() =>{
-          if (!!this.tweetElement) {
-            this.tweetElement.remove();
-          }
-          (<HTMLDivElement>this.tweetContainer.nativeElement).appendChild(tweet);
-          this.tweetElement = tweet;
-          this.tweetReady = true;
-        }))
-    );
-  }
-
-
 }
