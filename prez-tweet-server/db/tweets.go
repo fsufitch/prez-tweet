@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/model"
 )
@@ -43,18 +44,19 @@ func GetTweetsFromIDs(tx *sql.Tx, StrIDs []string) (tweetMap map[string]model.DB
 }
 
 // GetMostRecentTweet recovers the most recent tweet for a given presidential author
-func GetMostRecentTweet(tx *sql.Tx, author model.TweetAuthor) (t model.DBTweet, err error) {
+func GetMostRecentTweet(tx *sql.Tx, author model.TweetAuthor, before time.Time) (t model.DBTweet, err error) {
 	if len(author.ScreenNames) == 0 {
 		return model.DBTweet{}, fmt.Errorf("Author has no screen names: %v", author)
 	}
-	queryArgsStr, iArgs := stringQueryArgsList(author.ScreenNames, 0)
+	queryArgsStr, iArgs := stringQueryArgsList(author.ScreenNames, 1)
 	row := tx.QueryRow(`
 		SELECT t.tweet_id_str, t.screen_name, t.created_at, t.body
 		FROM tweets t
-		WHERE t.screen_name IN (`+queryArgsStr+`)
+		WHERE t.created_at < $1
+			AND t.screen_name IN (`+queryArgsStr+`)
 		ORDER BY t.created_at DESC
 		LIMIT 1;
-	`, iArgs...)
+	`, append([]interface{}{before}, iArgs...)...)
 	err = row.Scan(&t.IDStr, &t.ScreenName, &t.CreatedAt, &t.Body)
 	return
 }

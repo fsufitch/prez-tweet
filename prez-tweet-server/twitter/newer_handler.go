@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/db"
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/model"
@@ -31,6 +32,12 @@ func (h NewerTweetsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	offsetYears, err := strconv.Atoi(offsetYearsStr)
+	if err != nil {
+		util.WriteHTTPErrorResponse(w, 400, "Invalid offset "+err.Error())
+		return
+	}
+
 	tx, _ := db.NewTransaction()
 	defer tx.Rollback()
 	tweetMap, err := db.GetTweetsFromIDs(tx, []string{tweet1StrID, tweet2StrID})
@@ -54,8 +61,8 @@ func (h NewerTweetsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	olderTweet := tweet1
 	newerTweet := tweet2
-	if newerTweet.CreatedAt.Before(olderTweet.CreatedAt) {
-		olderTweet, newerTweet = newerTweet, olderTweet
+	if beforeWithOffset(tweet2, tweet1, offsetYears) {
+		olderTweet, newerTweet = tweet2, tweet1
 	}
 
 	otherTweet := newerTweet

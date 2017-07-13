@@ -11,6 +11,7 @@ import {
   SetSynchronizedOffsetAction,
   UpdateSynchronizedOlderAction,
   UpdateSynchronizedNewerAction,
+  UpdateSynchronizedOffsetAction,
  } from '../../store';
 
  import { TweetService } from '../shared';
@@ -38,7 +39,24 @@ export class ControlsService {
   }
 
   setSynchronizedOffset(offsetKey: DefaultOffsetKey) {
-    this.store.dispatch(new SetSynchronizedOffsetAction({offsetKey}))
+    this.store.dispatch(new SetSynchronizedOffsetAction({offsetKey}));
+
+    let offsetYears = DefaultOffsets[offsetKey].years;
+    let trumpTweetID$ = this.tweetService.getTrumpTweetID();
+    let obamaTweetID$ = this.tweetService.getObamaTweetID();
+    let syncOffsetYears$ = this.getSynchronizedOffsetKey()
+      .map(k => DefaultOffsets[k])
+      .map(offset => offset.years);
+
+    Observable.combineLatest(trumpTweetID$, obamaTweetID$, syncOffsetYears$)
+      .take(1)
+      .subscribe(([trumpTweetID, obamaTweetID, syncOffsetYears]) => {
+        this.store.dispatch(new UpdateSynchronizedOffsetAction({
+          offsetYears: syncOffsetYears,
+          obamaTweetStringID: obamaTweetID,
+          trumpTweetStringID: trumpTweetID,
+        }));
+      });
   }
 
   triggerSynchronizedOlder() {
@@ -53,8 +71,8 @@ export class ControlsService {
       .subscribe(([trumpTweetID, obamaTweetID, syncOffsetYears]) => {
         this.store.dispatch(new UpdateSynchronizedOlderAction({
           offsetYears: syncOffsetYears,
-          obamaTweetStringID: trumpTweetID,
-          trumpTweetStringID: obamaTweetID,
+          obamaTweetStringID: obamaTweetID,
+          trumpTweetStringID: trumpTweetID,
         }));
       });
   }
@@ -71,8 +89,8 @@ export class ControlsService {
       .subscribe(([trumpTweetID, obamaTweetID, syncOffsetYears]) => {
         this.store.dispatch(new UpdateSynchronizedNewerAction({
           offsetYears: syncOffsetYears,
-          obamaTweetStringID: trumpTweetID,
-          trumpTweetStringID: obamaTweetID,
+          obamaTweetStringID: obamaTweetID,
+          trumpTweetStringID: trumpTweetID,
         }));
       });
   }

@@ -8,6 +8,16 @@ export class SetSynchronizedOffsetAction implements Action {
   constructor(public payload: {offsetKey: DefaultOffsetKey}) {}
 }
 
+export class UpdateSynchronizedOffsetAction implements Action {
+  static type = 'prez-tweet/controls/updateSyncOffset'
+  type = UpdateSynchronizedOffsetAction.type;
+  constructor(public payload: {
+    offsetYears: number,
+    obamaTweetStringID: string,
+    trumpTweetStringID: string,
+  }) {}
+}
+
 export class UpdateSynchronizedOlderAction implements Action {
   static type = 'prez-tweet/controls/updateSyncOlder'
   type = UpdateSynchronizedOlderAction.type;

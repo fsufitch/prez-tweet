@@ -3,7 +3,6 @@ package twitter
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -12,16 +11,16 @@ import (
 	"github.com/fsufitch/prez-tweet/prez-tweet-server/util"
 )
 
-type olderTweetsResponse struct {
+type applyOffsetResponse struct {
 	ObamaTweetIDStr string `json:"obama_tweet_id_str"`
 	TrumpTweetIDStr string `json:"trump_tweet_id_str"`
 }
 
-// OlderTweetsHandler is a handler that receives two tweets and replaces
-// the newer one with the next older one by the same author.
-type OlderTweetsHandler struct{}
+// ApplyOffsetHandler is a handler that receives two tweets and replaces
+// the first one with newest one after applying an offset to the second one.
+type ApplyOffsetHandler struct{}
 
-func (h OlderTweetsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h ApplyOffsetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	tweet1StrID := query.Get("tweet1")
 	tweet2StrID := query.Get("tweet2")
@@ -40,10 +39,10 @@ func (h OlderTweetsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	tx, _ := db.NewTransaction()
 	defer tx.Rollback()
+
 	tweetMap, err := db.GetTweetsFromIDs(tx, []string{tweet1StrID, tweet2StrID})
 	if err != nil {
 		util.WriteHTTPErrorResponse(w, 500, err.Error())
-		log.Print(err)
 		return
 	}
 
@@ -59,29 +58,20 @@ func (h OlderTweetsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	olderTweet := tweet1
-	newerTweet := tweet2
-	if beforeWithOffset(tweet2, tweet1, offsetYears) {
-		olderTweet, newerTweet = tweet2, tweet1
-	}
-
-	otherTweet := olderTweet
-	resultTweet, err := getOlder(tx, newerTweet)
-	if err == sql.ErrNoRows {
-		resultTweet, err = getOlder(tx, olderTweet)
-		if err == sql.ErrNoRows {
-			util.WriteHTTPErrorResponse(w, 404, "No older tweets found")
-			return
-		}
-		otherTweet = newerTweet
-		err = nil
-	}
+	author, err := model.GetAuthorByScreenName(tweet1.ScreenName)
 	if err != nil {
-		util.WriteHTTPErrorResponse(w, 500, err.Error())
+		util.WriteHTTPErrorResponse(w, 400, "Invalid tweet author: "+tweet1.ScreenName)
+		return
+	}
+	before := tweet2.CreatedAt.AddDate(-1*offsetYears, 0, 0)
+
+	resultTweet, err := db.GetMostRecentTweet(tx, *author, before)
+	if err == sql.ErrNoRows {
+		util.WriteHTTPErrorResponse(w, 404, "No tweet found before offset time")
 		return
 	}
 
-	obamaTweet, trumpTweet, err := model.SeparateObamaTrump(resultTweet, otherTweet)
+	obamaTweet, trumpTweet, err := model.SeparateObamaTrump(resultTweet, tweet2)
 	if err != nil {
 		util.WriteHTTPErrorResponse(w, 500, err.Error())
 		return
@@ -96,14 +86,5 @@ func (h OlderTweetsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 	w.Write(data)
-}
 
-func getOlder(tx *sql.Tx, tweet model.DBTweet) (result model.DBTweet, err error) {
-	author, err := model.GetAuthorByScreenName(tweet.ScreenName)
-	if err != nil {
-		return
-	}
-
-	result, err = db.GetOlderTweet(tx, tweet, *author)
-	return
 }

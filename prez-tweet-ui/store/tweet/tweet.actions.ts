@@ -15,4 +15,5 @@ export class SetTrumpTweetIDAction implements Action {
 export class UpdateLatestTweetIDsAction implements Action {
   static type = 'prez-tweet/tweet/updateLatest';
   type = UpdateLatestTweetIDsAction.type;
+  constructor(public payload: {offsetYears: number} = {offsetYears: 0}) {}
 }

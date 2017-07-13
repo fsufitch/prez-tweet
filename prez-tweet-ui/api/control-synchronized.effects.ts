@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import {
   UpdateSynchronizedOlderAction,
   UpdateSynchronizedNewerAction,
+  UpdateSynchronizedOffsetAction,
   SetObamaTweetIDAction,
   SetTrumpTweetIDAction,
 } from '../store';
@@ -52,8 +53,24 @@ export class ControlSynchronizedEffects {
     .switchMap(url => common.scrubHttp(this.http.get(url)))
     .share();
 
+  private UpdateSynchronizedOffset$ = this.actions
+    .ofType(UpdateSynchronizedOffsetAction.type)
+    .map(action => (<UpdateSynchronizedNewerAction>action).payload)
+    .map(payload => $.param({
+      tweet1_offset_years: payload.offsetYears,
+      tweet1: payload.obamaTweetStringID,
+      tweet2: payload.trumpTweetStringID,
+    }))
+    .map(query => `//${this.apiHost}/api/syncApplyOffset?${query}`)
+    .switchMap(url => common.scrubHttp(this.http.get(url)))
+    .share();
+
   @Effect() synchronizedSuccess$ = Observable
-    .merge(this.UpdateSynchronizedNewer$, this.UpdateSynchronizedOlder$)
+    .merge(...[
+      this.UpdateSynchronizedNewer$,
+      this.UpdateSynchronizedOlder$,
+      this.UpdateSynchronizedOffset$,
+    ])
     .filter(({error}) => !error)
     .map(({response}) => <SyncTweetsResponseData>response.json())
     .flatMap(data => Observable.of(

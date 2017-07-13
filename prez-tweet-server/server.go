@@ -31,6 +31,8 @@ func createRoutes() (*mux.Router, error) {
 	api.Handle("/latest", twitter.LatestTweetsHandler{})
 	api.Handle("/syncOlder", twitter.OlderTweetsHandler{})
 	api.Handle("/syncNewer", twitter.NewerTweetsHandler{})
+	api.Handle("/syncApplyOffset", twitter.ApplyOffsetHandler{})
+
 	tweetpair.RegisterTweetPairRoutes(api.PathPrefix("/pair").Subrouter())
 
 	return router, nil
