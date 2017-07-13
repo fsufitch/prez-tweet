@@ -2,7 +2,7 @@ import 'core-js/client/core';
 import 'reflect-metadata';
 require('zone.js/dist/zone');
 
-if (process.env.ENV === 'build') {
+if (['prod', 'deploy'].indexOf(process.env.ENV) > -1) {
   // Production
 
 } else {

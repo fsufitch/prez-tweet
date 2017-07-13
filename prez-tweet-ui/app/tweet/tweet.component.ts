@@ -31,7 +31,6 @@ export class TweetComponent implements OnChanges {
     this.tweetReady = false;
     options.dnt = options.dnt === undefined ? true: options.dnt;
     let cb = (newTweet: HTMLElement) => this.zone.run(() => {
-      console.log('wut', this.tweetElement, newTweet);
       if (!!this.tweetElement) {
         this.tweetContainer.nativeElement.removeChild(this.tweetElement);
       }
