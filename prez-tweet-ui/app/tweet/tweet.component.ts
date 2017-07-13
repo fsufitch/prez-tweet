@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, NgZone, OnChanges, ViewChild } from '@angular/core';
+import { Component, Input, ElementRef, NgZone, OnChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { TwttrService } from '../shared';
@@ -7,6 +7,7 @@ import { TwttrService } from '../shared';
   selector: 'tweet',
   template: require('./tweet.component.html'),
   styles: [require('./tweet.component.scss')],
+  encapsulation: ViewEncapsulation.None, // Necessary to prevent flicker
 })
 export class TweetComponent implements OnChanges {
   @Input() idStr: string;

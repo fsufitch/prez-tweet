@@ -22,5 +22,9 @@
 
   .tweet-container {
     height: 100%;
+
+    .twitter-tweet:not(:first-child) {
+      display: none !important;
+    }
   }
 }
