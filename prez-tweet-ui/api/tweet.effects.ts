@@ -47,7 +47,7 @@ export class TweetAPIEffects {
   @Effect() updateLatestTweetsError$ = this.updateLatestTweets$
     .filter(({error}) => (!!error))
     .do(({error}) => {
-      console.log('Error updating latest tweets', error);
+      console.error('Error updating latest tweets', error);
     });
 
   @Effect() updateLatestTweetsSuccess$ = this.updateLatestTweets$

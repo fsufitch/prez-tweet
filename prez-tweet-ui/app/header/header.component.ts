@@ -11,4 +11,11 @@ export class HeaderComponent {
   showAboutModal() {
     $(this.aboutModal.nativeElement).modal('show');
   }
+
+  get miniTweetOptions(): TwttrOptions {
+    return {
+      dnt: true,
+      width: 250,
+    }
+  }
 }

@@ -1,5 +1,16 @@
+interface TwttrOptions {
+  cards?: 'hidden';
+  conversation?: 'none';
+  theme?: 'light' | 'dark';
+  linkColor?: string;
+  width?: number; // 250 - 550
+  align?: string;
+  lang?: string;
+  dnt?: boolean;
+}
+
 interface TwttrWidgets {
-  createTweet: (idStr: string, target: HTMLElement, options: any) => Promise<HTMLElement>;
+  createTweet: (idStr: string, target: HTMLElement, options: TwttrOptions) => Promise<HTMLElement>;
   [key:string]: any;
 }
 

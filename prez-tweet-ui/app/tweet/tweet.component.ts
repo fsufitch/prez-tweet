@@ -11,19 +11,25 @@ import { TwttrService } from '../shared';
 })
 export class TweetComponent implements OnChanges {
   @Input() idStr: string;
+  @Input() options: TwttrOptions = {dnt: true};
   @ViewChild("tweetContainer") private tweetContainer: ElementRef;
   tweetReady$ = new BehaviorSubject(false);
 
   private idStr$ = new BehaviorSubject<string>('');
-  private tweetElement$ = this.idStr$
+  private options$ = new BehaviorSubject<TwttrOptions>({});
+  private processedOptions$ = this.options$
+    .map(opt => <TwttrOptions>Object.assign(opt, {dnt: true}));
+
+  private tweetElement$ = Observable
+    .zip(this.idStr$.distinctUntilChanged(), this.processedOptions$.distinctUntilChanged())
     .do(() => this.tweetReady$.next(false))
-    .switchMap(id => {
+    .switchMap(([id, options]) => {
       if (!id) {
         return Observable.of<HTMLElement>(null);
       }
       let result = new Subject<HTMLElement>();
       this.twttrService.runWithTwttr(
-        (twttr) => twttr.widgets.createTweet(id, this.tweetContainer.nativeElement, {})
+        (twttr) => twttr.widgets.createTweet(id, this.tweetContainer.nativeElement, options)
           .then(tweet => this.zone.run(() => result.next(tweet)))
       );
       return result;
@@ -50,5 +56,6 @@ export class TweetComponent implements OnChanges {
 
   ngOnChanges() {
     this.idStr$.next(this.idStr);
+    this.options$.next(this.options);
   }
 }
