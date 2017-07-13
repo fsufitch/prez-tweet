@@ -13,41 +13,9 @@ export class TweetComponent implements OnChanges {
   @Input() idStr: string;
   @Input() options: TwttrOptions = {dnt: true};
   @ViewChild("tweetContainer") private tweetContainer: ElementRef;
-  tweetReady$ = new BehaviorSubject(false);
+  tweetReady = false;
 
-  private idStr$ = new BehaviorSubject<string>('');
-  private options$ = new BehaviorSubject<TwttrOptions>({});
-  private processedOptions$ = this.options$
-    .map(opt => <TwttrOptions>Object.assign(opt, {dnt: true}));
-
-  private tweetElement$ = Observable
-    .combineLatest(this.idStr$, this.processedOptions$)
-    .do(() => this.tweetReady$.next(false))
-    .switchMap(([id, options]) => {
-      if (!id) {
-        return Observable.of<HTMLElement>(null);
-      }
-      let result = new Subject<HTMLElement>();
-      this.twttrService.runWithTwttr(
-        (twttr) => twttr.widgets.createTweet(id, this.tweetContainer.nativeElement, options)
-          .then(tweet => this.zone.run(() => result.next(tweet)))
-      );
-      return result;
-    });
-
-  private currentTweetSubscription  = this.tweetElement$
-    .pairwise()
-    .map(([prev, curr]) => {
-      if (!!curr && !!prev) {
-        (<HTMLDivElement>this.tweetContainer.nativeElement).removeChild(prev);
-      }
-      return !!curr;
-    })
-    .filter(success => success)
-    .subscribe(() => {
-          this.tweetReady$.next(true);
-    });
-
+  private tweetElement: HTMLElement;
 
   constructor(
     private twttrService: TwttrService,
@@ -55,7 +23,22 @@ export class TweetComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.idStr$.next(this.idStr);
-    this.options$.next(this.options);
+    this.updateTweet(this.idStr, this.options);
+  }
+
+  private updateTweet(id: string, options: TwttrOptions={}) {
+    if (!id) return;
+    this.tweetReady = false;
+    options.dnt = options.dnt === undefined ? true: options.dnt;
+    let cb = (newTweet: HTMLElement) => this.zone.run(() => {
+      console.log('wut', this.tweetElement, newTweet);
+      if (!!this.tweetElement) {
+        this.tweetContainer.nativeElement.removeChild(this.tweetElement);
+      }
+      this.tweetElement = newTweet;
+      this.tweetReady = true;
+    })
+
+    this.twttrService.runWithTwttr(twttr => twttr.widgets.createTweet(id, this.tweetContainer.nativeElement, options).then(cb));
   }
 }
