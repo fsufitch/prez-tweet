@@ -21,7 +21,7 @@ export class TweetComponent implements OnChanges {
     .map(opt => <TwttrOptions>Object.assign(opt, {dnt: true}));
 
   private tweetElement$ = Observable
-    .zip(this.idStr$.distinctUntilChanged(), this.processedOptions$.distinctUntilChanged())
+    .combineLatest(this.idStr$, this.processedOptions$)
     .do(() => this.tweetReady$.next(false))
     .switchMap(([id, options]) => {
       if (!id) {
