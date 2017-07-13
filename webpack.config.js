@@ -21,7 +21,7 @@ module.exports = () => {
   var config = {};
 
   if (isDev) {
-    config.devtool = 'inline-source-map';
+    config.devtool = 'eval-source-map';
   } else {
     config.devtool = 'source-map';
   }
