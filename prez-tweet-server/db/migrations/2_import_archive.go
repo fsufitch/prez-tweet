@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"log"
 	"strings"
 	"time"
 
@@ -43,7 +42,6 @@ readLoop:
 
 		case err, ok := <-errChan:
 			if ok {
-				log.Print("error on CSV parse channel", err)
 				return err
 			}
 		}
@@ -92,18 +90,23 @@ func asyncLoadCSV(data string) (chan []string, chan error) {
 		var err error
 		var record []string
 		_, err = reader.Read() // Skip first line
+	doneReading:
 		for {
 			if err == nil {
 				if record != nil {
 					records <- record
 				}
 			} else if err == io.EOF {
-				break
+				break doneReading
 			} else {
-				errChan <- fmt.Errorf("CSV parse error: %v", err)
-				break
+				switch err.(*csv.ParseError).Err {
+				case csv.ErrFieldCount:
+					// ignore
+				default:
+					errChan <- fmt.Errorf("CSV parse error: %v", err)
+					break doneReading
+				}
 			}
-
 			record, err = reader.Read()
 		}
 		close(records)
