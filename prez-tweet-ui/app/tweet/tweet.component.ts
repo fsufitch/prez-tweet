@@ -21,28 +21,20 @@ export class TweetComponent implements OnChanges {
         return Observable.of<HTMLElement>(null);
       }
       let result = new Subject<HTMLElement>();
-      this.twttrService.runWithTwttr((twttr) => {
-        twttr.widgets.createTweet(id, this.tweetContainer.nativeElement, {})
-          .then(tweet => {
-            console.log('got tweet', tweet)
-            this.zone.run(() => result.next(tweet));
-          });
-        });
+      this.twttrService.runWithTwttr(
+        (twttr) => twttr.widgets.createTweet(id, this.tweetContainer.nativeElement, {})
+          .then(tweet => this.zone.run(() => result.next(tweet)))
+      );
       return result;
     });
 
   private currentTweetSubscription  = this.tweetElement$
     .pairwise()
     .map(([prev, curr]) => {
-      console.log(prev, curr);
-      if (!!prev) {
-        prev.parentNode.replaceChild(curr, prev);
-        return true;
-      } else if (!!curr) {
-        this.tweetContainer.nativeElement.appendChild(curr);
-        return true;
+      if (!!curr && !!prev) {
+        (<HTMLDivElement>this.tweetContainer.nativeElement).removeChild(prev);
       }
-      return false;
+      return !!curr;
     })
     .filter(success => success)
     .subscribe(() => {
