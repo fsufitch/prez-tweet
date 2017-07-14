@@ -29,6 +29,10 @@ for screenName in 'BarackObama' 'POTUS44' 'realDonaldTrump' 'POTUS'; do
   echo "--- Deleted $targetFile.";
 done
 
+echo "--- Patching $combinedFile to fix ambiguous CSV..."
+sed 's/"";/" ";/' $combinedFile > /tmp/patched-combined.csv;
+mv /tmp/patched-combined.csv $combinedFile;
+
 echo "--- Re-reading $combinedFile.";
 csvBody="$(cat "$combinedFile")";
 echo "--- Generating $goFile.";
