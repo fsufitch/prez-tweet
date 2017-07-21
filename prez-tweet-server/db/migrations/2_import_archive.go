@@ -3,11 +3,13 @@ package migrations
 import (
 	"database/sql"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
 	"time"
 
+	scrape "github.com/fsufitch/prez-tweet/twitter-scrape"
 	"github.com/pressly/goose"
 )
 
@@ -17,33 +19,20 @@ func init() {
 
 // Up2 imports the old pre-generated tweet archive
 func Up2(tx *sql.Tx) error {
-	records, errChan := asyncLoadCSV(tweetArchiveCSV)
+	archive, err := loadArchiveJSON([]byte(tweetArchiveJSON))
+	if err != nil {
+		return err
+	}
 
-readLoop:
-	for {
-		select {
-		case rawRecord, ok := <-records:
-			if !ok {
-				break readLoop
-			}
-
-			tw, err := parseRecord(rawRecord)
-			if err != nil {
-				return err
-			}
-			_, err = tx.Exec(`
-        INSERT INTO tweets (tweet_id_str, screen_name, created_at, body)
-        VALUES ($1, $2, $3, $4)
-        ON CONFLICT DO NOTHING;
-      `, tw.IDStr, tw.ScreenName, tw.CreatedAt, tw.Body)
-			if err != nil {
-				return err
-			}
-
-		case err, ok := <-errChan:
-			if ok {
-				return err
-			}
+	for _, tw := range archive.Tweets {
+		createdAtTime := time.Unix(tw.CreatedAt, 0)
+		_, err = tx.Exec(`
+			INSERT INTO tweets (tweet_id_str, screen_name, created_at, body)
+			VALUES ($1, $2, $3, $4)
+			ON CONFLICT DO NOTHING;
+		`, tw.IDStr, tw.ScreenName, createdAtTime, tw.Body)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -113,4 +102,13 @@ func asyncLoadCSV(data string) (chan []string, chan error) {
 		close(errChan)
 	}()
 	return records, errChan
+}
+
+func loadArchiveJSON(data []byte) (*scrape.TweetCollectionExportJSON, error) {
+	result := &scrape.TweetCollectionExportJSON{}
+	err := json.Unmarshal(data, result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }

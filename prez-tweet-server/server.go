@@ -50,10 +50,6 @@ func StartServer() (err error) {
 		return
 	}
 
-	err = runCrawl()
-	if err != nil {
-		return
-	}
 	go runRepeatCrawls(10 * time.Minute)
 
 	router, err := createRoutes()
@@ -86,7 +82,7 @@ func runCrawl() (err error) {
 
 func runRepeatCrawls(delay time.Duration) {
 	for {
-		time.Sleep(delay)
 		runCrawl()
+		time.Sleep(delay)
 	}
 }
