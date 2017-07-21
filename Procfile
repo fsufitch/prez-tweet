@@ -1,1 +1,1 @@
-web: prez-tweet
+web: prez-tweet serve
