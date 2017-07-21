@@ -96,7 +96,7 @@ module.exports = () => {
     historyApiFallback: true,
     quiet: false,
     stats: 'normal', // none (or false), errors-only, minimal, normal (or true) and verbose
-    port: 8888,
+    port: process.env.WEBPACK_DEV_SERVER_PORT || 8888,
   };
 
   return config
