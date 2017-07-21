@@ -1,5 +1,5 @@
-hash: 64afee7ad5697879eebc9ac8b755916d921d318869546d8d4920fdb56f9f626f
-updated: 2017-07-20T18:02:31.555068496-04:00
+hash: b8e4e45cf5ee6b238e22fb3e9d574bac5ef8bcddba76d50cf489dbf8b5f10594
+updated: 2017-07-20T20:38:15.102927596-04:00
 imports:
 - name: astuart.co/goq
   version: 0a7802fa59a73faa6613d9380b8aa505c27022d8
@@ -27,6 +27,12 @@ imports:
   version: 8837942c3e09574accbc5f150e2c5e057189cace
   subpackages:
   - oid
+- name: github.com/mattn/go-colorable
+  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
+  repo: https://github.com/mattn/go-colorable
+- name: github.com/mattn/go-isatty
+  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
+  repo: https://github.com/mattn/go-isatty
 - name: github.com/NYTimes/gziphandler
   version: 56545f4a5d46df9a6648819d1664c3a03a13ffdb
 - name: github.com/pquerna/cachecontrol
@@ -47,4 +53,25 @@ imports:
   - html/atom
 - name: golang.org/x/oauth2
   version: cce311a261e6fcf29de72ca96827bdb0b7d9c9e6
+- name: golang.org/x/sys
+  version: e24f485414aeafb646f6fca458b0bf869c0880a1
+  repo: https://go.googlesource.com/sys
+  subpackages:
+  - unix
+- name: gopkg.in/cheggaaa/pb.v1
+  version: 4a1bf7a97d1348c5b50aabf6e1eb0496ca0a3d33
+- name: gopkg.in/cheggaaa/pb.v2
+  version: 4a1bf7a97d1348c5b50aabf6e1eb0496ca0a3d33
+  subpackages:
+  - termutil
+- name: gopkg.in/fatih/color.v1
+  version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
+- name: gopkg.in/mattn/go-colorable.v0
+  version: 941b50ebc6efddf4c41c8e4537a5f68a4e686b24
+- name: gopkg.in/mattn/go-isatty.v0
+  version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
+- name: gopkg.in/mattn/go-runewidth.v0
+  version: 9e777a8366cce605130a531d2cd6363d07ad7317
+- name: gopkg.in/VividCortex/ewma.v1
+  version: c595cd886c223c6c28fc9ae2727a61b5e4693d85
 testImports: []

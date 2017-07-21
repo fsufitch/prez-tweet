@@ -6,8 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"strings"
 	"time"
+
+	pb "gopkg.in/cheggaaa/pb.v1"
 
 	scrape "github.com/fsufitch/prez-tweet/twitter-scrape"
 	"github.com/pressly/goose"
@@ -23,6 +26,9 @@ func Up2(tx *sql.Tx) error {
 	if err != nil {
 		return err
 	}
+	log.Println("Archive timestamp: ", archive.ExportTimestamp)
+	log.Println(archive.UserCounts, "total:", len(archive.Tweets))
+	bar := pb.StartNew(len(archive.Tweets))
 
 	for _, tw := range archive.Tweets {
 		createdAtTime := time.Unix(tw.CreatedAt, 0)
@@ -32,9 +38,12 @@ func Up2(tx *sql.Tx) error {
 			ON CONFLICT DO NOTHING;
 		`, tw.IDStr, tw.ScreenName, createdAtTime, tw.Body)
 		if err != nil {
+			bar.Finish()
 			return err
 		}
+		bar.Increment()
 	}
+	bar.Finish()
 
 	return nil
 }
