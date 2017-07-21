@@ -7,7 +7,6 @@ This is a project attempting to define what "modern day presidential" tweets
 are, as referred to by the USA's 45th president:
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">My use of social media is not Presidential - it’s MODERN DAY PRESIDENTIAL. Make America Great Again!</p>&mdash; Donald J. Trump (@realDonaldTrump) <a href="https://twitter.com/realDonaldTrump/status/881281755017355264">July 1, 2017</a></blockquote>
-<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 Prerequisites
 -------------
