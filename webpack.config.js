@@ -10,7 +10,7 @@ var isProd = (ENV === 'prod') || isDeploy;
 var isDev = (ENV === 'dev') || (!isProd);
 var envText = isDeploy ? 'deploy' : isProd ? 'prod' : 'dev'
 
-console.log('Resolved build environment: '  + envText);
+console.debug('Resolved build environment: '  + envText);
 
 // Webpack Plugins
 var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;

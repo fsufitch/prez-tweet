@@ -1,9 +1,6 @@
 <appheader></appheader>
 <div class="content">
   <appcontrols mode="1"></appcontrols>
-  <div class="compared-tweets">
-    <tweet [idStr]="trumpTweetID$ | async"></tweet>
-    <tweet [idStr]="obamaTweetID$ | async"></tweet>
-  </div>
+  <router-outlet></router-outlet>
 </div>
 <appfooter></appfooter>

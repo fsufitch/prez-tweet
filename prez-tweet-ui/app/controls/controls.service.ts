@@ -20,7 +20,7 @@ import {
 export class ControlsService {
   constructor(
     private store: Store<RootState>,
-    private tweetService: TweetService
+    private tweetService: TweetService,
   ) {}
 
 

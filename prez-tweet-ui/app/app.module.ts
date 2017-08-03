@@ -1,38 +1,42 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { HttpModule } from '@angular/http'
+import { RouterModule, Routes } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 
+import { CommonModule } from './common';
 import { AppComponent } from './app.component';
 import { FooterComponent } from './footer';
 import { HeaderComponent } from './header';
 import { AppStatusComponent } from './status';
-import { TweetComponent } from './tweet';
 import { ControlsModule } from './controls';
+import { CompareTweetsModule } from './compare-tweets';
 
-import { StoreModule } from '../store';
 import { API_EFFECTS } from '../api';
-import { SERVICES } from './shared';
 
+const isProd = ['prod', 'deploy'].indexOf(process.env.ENV) > -1;
+const ROUTES: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: '/p',
+  }
+];
 @NgModule({
   imports: [
-    BrowserModule,
-    HttpModule,
-    StoreModule,
-    ...API_EFFECTS.map(e => EffectsModule.runAfterBootstrap(e)),
+    CommonModule,
     ControlsModule,
+    CompareTweetsModule,
+    ...API_EFFECTS.map(e => EffectsModule.runAfterBootstrap(e)),
+    RouterModule.forRoot(ROUTES, {
+      enableTracing: !isProd,
+      useHash: true,
+    }),
   ],
 
   declarations: [
     AppComponent,
     AppStatusComponent,
-    TweetComponent,
     HeaderComponent,
     FooterComponent,
-  ],
-
-  providers: [
-    ...SERVICES,
   ],
 
   bootstrap: [AppComponent]

@@ -9,6 +9,9 @@ import {
   UpdateLatestTweetIDsAction,
   SetObamaTweetIDAction,
   SetTrumpTweetIDAction,
+  UpdateTweetPairFromPairAction,
+  UpdateTweetPairFromShortIDAction,
+  SetTweetPairAction,
 } from '../store';
 
 import '../common';
@@ -27,10 +30,6 @@ export class TweetAPIEffects {
     private actions: Actions,
   ) {}
 
-  @Effect() updateLatestTweetsOnInit$ = this.actions
-    .ofType('@ngrx/store/init')
-    .map(() => new UpdateLatestTweetIDsAction());
-
   private updateLatestTweets$ = this.actions
     .ofType(UpdateLatestTweetIDsAction.type)
     .switchMap(() => this.http.get(`//${this.apiHost}/api/latest`)
@@ -48,7 +47,8 @@ export class TweetAPIEffects {
     .filter(({error}) => (!!error))
     .do(({error}) => {
       console.error('Error updating latest tweets', error);
-    });
+    })
+    .flatMap(() => Observable.of());
 
   @Effect() updateLatestTweetsSuccess$ = this.updateLatestTweets$
     .filter(({error}) => (!error))

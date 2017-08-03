@@ -17,13 +17,13 @@ export class TweetService {
    return compose(
      TweetSelectors.selectTrumpTweetID(),
      RootSelectors.selectTweetState()
-   )(this.store);
+   )(this.store).distinctUntilChanged();
  }
 
  getObamaTweetID() {
    return compose(
      TweetSelectors.selectObamaTweetID(),
      RootSelectors.selectTweetState()
-   )(this.store);
+   )(this.store).distinctUntilChanged();
  }
 }

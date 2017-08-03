@@ -20,16 +20,6 @@ ng2app {
     align-items: center;
     text-align: center;
     flex: 1;
-
-    .compared-tweets {
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: center;
-
-      tweet {
-        margin: 5px;
-      }
-    }
   }
 }
 
