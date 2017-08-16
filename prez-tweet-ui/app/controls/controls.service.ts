@@ -2,16 +2,18 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { compose } from '@ngrx/core/compose';
 import { Observable } from 'rxjs'
+import * as Moment from 'moment';
 
 import { DefaultOffsetKey, DefaultOffsets } from '../../common';
 import {
+  Tweet,
   RootState,
   RootSelectors,
   ControlsSelectors,
   SetSynchronizedOffsetAction,
-  UpdateSynchronizedOlderAction,
-  UpdateSynchronizedNewerAction,
   UpdateSynchronizedOffsetAction,
+  TriggerSynchronizedOlderAction,
+  TriggerSynchronizedNewerAction,
  } from '../../store';
 
  import { TweetService } from '../shared';
@@ -22,7 +24,6 @@ export class ControlsService {
     private store: Store<RootState>,
     private tweetService: TweetService,
   ) {}
-
 
   getControlsMode() {
     return this.store.let(compose(
@@ -59,39 +60,43 @@ export class ControlsService {
       });
   }
 
-  triggerSynchronizedOlder() {
-    let trumpTweetID$ = this.tweetService.getTrumpTweetID();
-    let obamaTweetID$ = this.tweetService.getObamaTweetID();
-    let syncOffsetYears$ = this.getSynchronizedOffsetKey()
-      .map(k => DefaultOffsets[k])
-      .map(offset => offset.years);
+  canSyncOlder() {
+    return Observable.combineLatest(
+      this.tweetService.getTrumpTweet().filter(tw => !!tw),
+      this.tweetService.getObamaTweet().filter(tw => !!tw),
+    )
+    .map(([trumpTweet, obamaTweet]) => !!trumpTweet.previousIDStr || !!obamaTweet.previousIDStr);
+  }
 
-    Observable.combineLatest(trumpTweetID$, obamaTweetID$, syncOffsetYears$)
-      .take(1)
-      .subscribe(([trumpTweetID, obamaTweetID, syncOffsetYears]) => {
-        this.store.dispatch(new UpdateSynchronizedOlderAction({
-          offsetYears: syncOffsetYears,
-          obamaTweetStringID: obamaTweetID,
-          trumpTweetStringID: trumpTweetID,
-        }));
-      });
+  canSyncNewer() {
+    return Observable.combineLatest(
+      this.tweetService.getTrumpTweet().filter(tw => !!tw),
+      this.tweetService.getObamaTweet().filter(tw => !!tw),
+    )
+    .map(([trumpTweet, obamaTweet]) => !!trumpTweet.nextIDStr || !!obamaTweet.nextIDStr);
+  }
+
+  triggerSynchronizedOlder() {
+    this.getSyncTriggerArguments().subscribe(args =>
+      this.store.dispatch(new TriggerSynchronizedOlderAction(args))
+    );
   }
 
   triggerSynchronizedNewer() {
-    let trumpTweetID$ = this.tweetService.getTrumpTweetID();
-    let obamaTweetID$ = this.tweetService.getObamaTweetID();
-    let syncOffsetYears$ = this.getSynchronizedOffsetKey()
+    this.getSyncTriggerArguments().subscribe(args =>
+      this.store.dispatch(new TriggerSynchronizedNewerAction(args))
+    );
+  }
+
+
+  private getSyncTriggerArguments() {
+    let trumpTweet$ = this.tweetService.getTrumpTweet().first(tw => !!tw);
+    let obamaTweet$ = this.tweetService.getObamaTweet().first(tw => !!tw);
+    let syncOffset$ = this.getSynchronizedOffsetKey().take(1)
       .map(k => DefaultOffsets[k])
       .map(offset => offset.years);
 
-    Observable.combineLatest(trumpTweetID$, obamaTweetID$, syncOffsetYears$)
-      .take(1)
-      .subscribe(([trumpTweetID, obamaTweetID, syncOffsetYears]) => {
-        this.store.dispatch(new UpdateSynchronizedNewerAction({
-          offsetYears: syncOffsetYears,
-          obamaTweetStringID: obamaTweetID,
-          trumpTweetStringID: trumpTweetID,
-        }));
-      });
+    return Observable.zip(obamaTweet$, trumpTweet$, syncOffset$)
+      .map(([obamaTweet, trumpTweet, offsetYears]) => ({obamaTweet, trumpTweet, offsetYears}))
   }
 }

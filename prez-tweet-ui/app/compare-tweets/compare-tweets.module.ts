@@ -5,17 +5,17 @@ import { EffectsModule } from '@ngrx/effects';
 import { CommonModule } from '../common';
 import { CompareTweetsComponent } from './compare-tweets.component';
 import { CompareTweetsEffects } from './compare-tweets.effects';
-import { TweetPairShortIDResolver } from './tweet-pair-resolver.service';
+import { TweetPairResolver } from './tweet-pair-resolver.service';
 
 const ROUTES: Routes = [
   {
     path: 'p/:pairShortId',
-    resolve: {pairShortId: TweetPairShortIDResolver},
+    resolve: {tweetPair: TweetPairResolver},
     component: CompareTweetsComponent,
   },
   {
     path: 'p',
-    resolve: {pairShortId: TweetPairShortIDResolver},
+    resolve: {pairShortId: TweetPairResolver},
     component: CompareTweetsComponent,
   },
 ];
@@ -30,7 +30,7 @@ const ROUTES: Routes = [
     CompareTweetsComponent,
   ],
   providers: [
-    TweetPairShortIDResolver,
+    TweetPairResolver,
   ]
 })
 export class CompareTweetsModule {}

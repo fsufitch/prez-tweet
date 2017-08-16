@@ -1,35 +1,24 @@
 import { Observable } from 'rxjs';
+import { compose } from '@ngrx/core/compose';
 import { TweetState } from './tweet.state';
 
-import {
-  TweetID,
-  TweetPairShortID,
-  TweetPairLongID,
-  createTweetPairLongID,
-  extractTweetIDs,
-} from './tweet-pair.model';
+import { Tweet, TweetPair, createTweetPairLongID } from './tweet.model';
 
 export class TweetSelectors  {
-  static selectObamaTweetID() {
-    return (state$: Observable<TweetState>) => state$.select(s => s.obamaTweetID);
+  static selectTweet(idStr: string) {
+    return (state$: Observable<TweetState>) => state$.select(s => s.tweets.get(idStr));
   }
 
-  static selectTrumpTweetID() {
-    return (state$: Observable<TweetState>) => state$.select(s => s.trumpTweetID);
+  static selectTweetPair(id: string) {
+    return (state$ : Observable<TweetState>) => state$.select(s => s.tweetPairs.get(id));
   }
 
-  static selectTweetPairFromShortID(shortID: TweetPairShortID) {
-    return (state$ : Observable<TweetState>) => state$.select(s => {
-      let longID: TweetPairLongID = s.shortToLongMap.get(shortID);
-      if (!longID) return null;
-
-      let {obamaTweetID, trumpTweetID} = extractTweetIDs(longID);
-      return {obamaTweetID, trumpTweetID};
-    })
+  static selectCurrentTweetPairID() {
+    return (state$ : Observable<TweetState>) => state$.select(s => s.currentTweetPair);
   }
 
-  static selectShortIDFromTweetPair(obamaTweetID: TweetID, trumpTweetID: TweetID) {
-    let longID: TweetPairLongID = createTweetPairLongID(obamaTweetID, trumpTweetID);
-    return (state$: Observable<TweetState>) => state$.select(s => s.longToShortMap.get(longID));
+  static selectTweetPairFromTweets(obamaTweetID: string, trumpTweetID: string) {
+    let longID = createTweetPairLongID(obamaTweetID, trumpTweetID);
+    return (state$: Observable<TweetState>) => state$.select(s => s.tweetPairs.get(longID));
   }
 }

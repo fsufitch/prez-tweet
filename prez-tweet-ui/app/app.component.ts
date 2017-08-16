@@ -11,9 +11,4 @@ import { TweetService } from './shared';
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class AppComponent {
-  constructor(private tweetService: TweetService) {}
-
-  obamaTweetID$ = this.tweetService.getObamaTweetID();
-  trumpTweetID$ = this.tweetService.getTrumpTweetID();
-}
+export class AppComponent {}

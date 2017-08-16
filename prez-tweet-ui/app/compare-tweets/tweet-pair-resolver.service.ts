@@ -3,21 +3,19 @@ import { Router, Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
-import { CompareTweetsService, TweetService } from '../shared';
+import { TweetService } from '../shared';
 import {
+  TweetPair,
   RootState,
   UpdateLatestTweetIDsAction,
-  TweetPairShortID,
-  SetObamaTweetIDAction,
-  SetTrumpTweetIDAction,
+
 } from '../../store';
 
 @Injectable()
-export class TweetPairShortIDResolver implements Resolve<TweetPairShortID>{
+export class TweetPairResolver implements Resolve<TweetPair>{
   constructor(
     private router: Router,
     private store: Store<RootState>,
-    private compareTweetsService: CompareTweetsService,
     private tweetService: TweetService,
   ) {}
 
@@ -25,37 +23,34 @@ export class TweetPairShortIDResolver implements Resolve<TweetPairShortID>{
   resolve(route: ActivatedRouteSnapshot) {
     let foundShortID = route.paramMap.get('pairShortId');
     if (!!foundShortID) {
-      this.triggerUpdateTweetIDsForShortID(foundShortID);
-      return Observable.of(foundShortID);
+      return this.getExistingTweetPair(foundShortID);
     }
 
-
-    let obamaTweetID$ = this.tweetService.getObamaTweetID();
-    let trumpTweetID$ = this.tweetService.getTrumpTweetID();
-    let mergedTweetIDs$ = Observable.zip(obamaTweetID$, trumpTweetID$);
-
-    mergedTweetIDs$.take(1).subscribe(([obamaTweetID, trumpTweetID]) => {
-      if (!obamaTweetID || !trumpTweetID) {
-        this.store.dispatch(new UpdateLatestTweetIDsAction())
-      }
-    });
-
-
-    return mergedTweetIDs$.first(ids => ids.every(id => !!id))
-        .flatMap(([obamaTweetID, trumpTweetID]) =>
-          this.compareTweetsService.getShortIDByTweetPair(obamaTweetID, trumpTweetID)
-        )
-        .first(id => !!id)
-        .do(id => this.router.navigate(['p', id]));
+    return this.getCurrentOrLatestTweetIDs()
+      .flatMap(({obama, trump}) => this.getNewTweetPair(obama, trump));
   }
 
-  private triggerUpdateTweetIDsForShortID(shortID: TweetPairShortID) {
-    this.compareTweetsService.getTweetPairByShortId(shortID)
-      .filter(pair => !!pair)
-      .first(({obamaTweetID, trumpTweetID}) => !!obamaTweetID && !!trumpTweetID)
-      .subscribe(({obamaTweetID, trumpTweetID}) => {
-        this.store.dispatch(new SetObamaTweetIDAction({tweetID: obamaTweetID}));
-        this.store.dispatch(new SetTrumpTweetIDAction({tweetID: trumpTweetID}));
-      });
+  private getExistingTweetPair(shortID: string) {
+    this.tweetService.populateTweetPairFromShortID(shortID);
+    this.tweetService.setCurrentTweetPairID(shortID);
+    return this.tweetService.getTweetPair(shortID)
+      .first(pair => !!pair);
+  }
+
+  private getCurrentOrLatestTweetIDs() {
+    let ids$ = Observable.combineLatest(
+      this.tweetService.getObamaTweetID(),
+      this.tweetService.getTrumpTweetID(),
+    ).map(([obama, trump]) => ({obama, trump}));
+
+    ids$.take(1).filter(({obama, trump}) => !obama || !trump)
+      .subscribe(() => this.store.dispatch(new UpdateLatestTweetIDsAction()));
+
+    return ids$.first(({obama, trump}) => !!obama && !!trump);
+  }
+
+  private getNewTweetPair(obamaTweetID: string, trumpTweetID: string) {
+    this.tweetService.populateTweetPairFromTweets(obamaTweetID, trumpTweetID);
+    return this.tweetService.getTweetPairFromTweets(obamaTweetID, trumpTweetID).first(pair => !!pair);
   }
 }

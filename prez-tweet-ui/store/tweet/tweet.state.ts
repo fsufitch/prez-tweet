@@ -1,49 +1,56 @@
 import { ActionReducer, Action } from '@ngrx/store';
 import { Record, Map } from 'immutable';
 import {
-  SetObamaTweetIDAction,
-  SetTrumpTweetIDAction,
   SetTweetPairAction,
+  SetTweetAction,
+  SetCurrentTweetPairAction,
 } from './tweet.actions';
 
-import { TweetPairLongID, TweetPairShortID, TweetID, createTweetPairLongID } from './tweet-pair.model';
+import { Tweet, TweetPair, createTweetPairLongID } from './tweet.model'
 
 export interface TweetState {
-  obamaTweetID: string,
-  trumpTweetID: string,
-  longToShortMap: Map<TweetPairLongID, TweetPairShortID>,
-  shortToLongMap: Map<TweetPairShortID, TweetPairLongID>,
+  currentTweetPair: string;
+  tweets: Map<string, Tweet>;
+  tweetPairs: Map<string, TweetPair>;
 }
 
 export const DEFAULT_TWEET_STATE = {
-  obamaTweetID: '',
-  trumpTweetID: '',
-  longToShortMap: Map.of(),
-  shortToLongMap: Map.of(),
+  currentTweetPair: '',
+  tweets: Map.of(),
+  tweetPairs: Map.of(),
 }
 
 export class TweetState extends Record(DEFAULT_TWEET_STATE) {}
 
 export const tweetReducer: ActionReducer<TweetState> = (state: TweetState=new TweetState(), action: Action) => {
   switch (action.type) {
-    case SetObamaTweetIDAction.type: {
-      let tweetID = (<SetObamaTweetIDAction>action).payload.tweetID;
-      state = <TweetState>state.set('obamaTweetID', tweetID);
-      break;
-    }
-    case SetTrumpTweetIDAction.type: {
-      let tweetID = (<SetTrumpTweetIDAction>action).payload.tweetID;
-      state = <TweetState>state.set('trumpTweetID', tweetID);
-      break;
-    }
     case SetTweetPairAction.type: {
       let payload = (<SetTweetPairAction>action).payload;
-      let longID = createTweetPairLongID(payload.obamaTweetID, payload.trumpTweetID);
+      let pair: TweetPair = {
+        id: createTweetPairLongID(payload.obamaTweetID, payload.trumpTweetID),
+        shortID: payload.shortTweetID,
+        obamaTweetID: payload.obamaTweetID,
+        trumpTweetID: payload.trumpTweetID,
+      };
       state = <TweetState>state
-        .setIn(['longToShortMap', longID], payload.shortTweetID)
-        .setIn(['shortToLongMap', payload.shortTweetID], longID);
+        .setIn(['tweetPairs', pair.id], pair)
+        .setIn(['tweetPairs', pair.shortID], pair);
+      break;
+    }
+
+    case SetCurrentTweetPairAction.type: {
+      let id = (<SetCurrentTweetPairAction>action).payload.id;
+      state = <TweetState>state.set('currentTweetPair', id);
+      break;
+    }
+
+    case SetTweetAction.type: {
+      let tweet = (<SetTweetAction>action).payload.tweet;
+      state = <TweetState>state.setIn(['tweets', tweet.idStr], tweet);
       break;
     }
   }
+  //console.log("After Action", action);
+  //console.log("Tweet state", state.toJS());
   return state;
 }

@@ -10,7 +10,9 @@ import { AppStatusComponent } from './status';
 import { ControlsModule } from './controls';
 import { CompareTweetsModule } from './compare-tweets';
 
-import { API_EFFECTS } from '../api';
+import { EFFECTS as API_EFFECTS } from '../api';
+import { EFFECTS as SHARED_EFFECTS } from './shared';
+import { EFFECTS as CONTROLS_EFFECTS } from './controls';
 
 const isProd = ['prod', 'deploy'].indexOf(process.env.ENV) > -1;
 const ROUTES: Routes = [
@@ -20,14 +22,17 @@ const ROUTES: Routes = [
     redirectTo: '/p',
   }
 ];
+
+const EFFECTS = [...API_EFFECTS, ...CONTROLS_EFFECTS, ...SHARED_EFFECTS];
+
 @NgModule({
   imports: [
     CommonModule,
     ControlsModule,
     CompareTweetsModule,
-    ...API_EFFECTS.map(e => EffectsModule.runAfterBootstrap(e)),
+    ...EFFECTS.map(e => EffectsModule.runAfterBootstrap(e)),
     RouterModule.forRoot(ROUTES, {
-      enableTracing: !isProd,
+      //enableTracing: !isProd,
       useHash: true,
     }),
   ],

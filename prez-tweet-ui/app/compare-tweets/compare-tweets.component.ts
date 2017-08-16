@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { CompareTweetsService } from '../shared';
+import { TweetService } from '../shared';
+import { TweetPair } from '../../store';
 
 @Component({
   selector: 'compare-tweets',
@@ -11,11 +12,10 @@ import { CompareTweetsService } from '../shared';
 export class CompareTweetsComponent {
   constructor(
     private route: ActivatedRoute,
-    private compareTweetsService: CompareTweetsService,
+    private tweetService: TweetService,
   ) {}
 
-  pairShortId$ = this.route.data.map(({pairShortId}) => <string>pairShortId);
-  tweetPair$ = this.pairShortId$.flatMap(id => this.compareTweetsService.getTweetPairByShortId(id));
+  tweetPair$ = this.route.data.map(({tweetPair}) => <TweetPair>tweetPair)
   obamaTweetID$ = this.tweetPair$.map(pair => !!pair ? pair.obamaTweetID : null);
   trumpTweetID$ = this.tweetPair$.map(pair => !!pair ? pair.trumpTweetID : null);
 }

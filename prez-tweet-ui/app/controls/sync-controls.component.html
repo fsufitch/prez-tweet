@@ -20,10 +20,14 @@
 <form class="navbar-form">
   <div class="form-group">
     <div class="btn-group" role="group" aria-label="Offset">
-      <button type="button" class="btn btn-primary" (click)="olderClicked()">
+      <button type="button" class="btn btn-primary"
+        (click)="olderClicked()"
+        [disabled]="!(canSyncOlder$ | async)">
         &larr; Older
       </button>
-      <button type="button" class="btn btn-primary" (click)="newerClicked()">
+      <button type="button" class="btn btn-primary"
+        (click)="newerClicked()"
+        [disabled]="!(canSyncNewer$ | async)">
         Newer &rarr;
       </button>
     </div>

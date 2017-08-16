@@ -1,18 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { TweetID, TweetPairShortID, TweetPairLongID } from './tweet-pair.model';
-
-export class SetObamaTweetIDAction implements Action {
-  static type = 'prez-tweet/tweet/setObama';
-  type = SetObamaTweetIDAction.type;
-  constructor(public payload: {tweetID: TweetID}) {}
-}
-
-export class SetTrumpTweetIDAction implements Action {
-  static type = 'prez-tweet/tweet/setTrump';
-  type = SetTrumpTweetIDAction.type;
-  constructor(public payload: {tweetID: TweetID}) {}
-}
+import { Tweet, TweetPair } from './tweet.model';
 
 export class UpdateLatestTweetIDsAction implements Action {
   static type = 'prez-tweet/tweet/updateLatest';
@@ -23,17 +11,35 @@ export class UpdateLatestTweetIDsAction implements Action {
 export class SetTweetPairAction implements Action {
   static type = 'prez-tweet/tweet/setTweetPairAction';
   type = SetTweetPairAction.type;
-  constructor(public payload: {obamaTweetID: TweetID, trumpTweetID: TweetID, shortTweetID: TweetPairShortID}) {}
+  constructor(public payload: {obamaTweetID: string, trumpTweetID: string, shortTweetID: string}) {}
+}
+
+export class SetCurrentTweetPairAction implements Action {
+  static type = 'prez-tweet/tweet/setCurrentTweetPairAction';
+  type = SetCurrentTweetPairAction.type;
+  constructor(public payload: {id: string}) {}
 }
 
 export class UpdateTweetPairFromPairAction implements Action {
   static type = 'prez-tweet/tweet/updateTweetPairFromPairAction';
   type = UpdateTweetPairFromPairAction.type;
-  constructor(public payload: {obamaTweetID: TweetID, trumpTweetID: TweetID}) {}
+  constructor(public payload: {obamaTweetID: string, trumpTweetID: string}) {}
 }
 
 export class UpdateTweetPairFromShortIDAction implements Action {
   static type = 'prez-tweet/tweet/updateTweetPairFromShortIDAction';
   type = UpdateTweetPairFromShortIDAction.type;
-  constructor(public payload: {shortTweetID: TweetPairShortID}) {}
+  constructor(public payload: {shortTweetID: string}) {}
+}
+
+export class PopulateTweetAction implements Action {
+  static type = 'prez-tweet/tweet/populateTweet';
+  type = PopulateTweetAction.type;
+  constructor(public payload: {idStr: string}) {}
+}
+
+export class SetTweetAction implements Action {
+  static type = 'prez-tweet/tweet/setTweet';
+  type = SetTweetAction.type;
+  constructor(public payload: {tweet: Tweet}) {}
 }

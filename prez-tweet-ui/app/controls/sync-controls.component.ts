@@ -13,6 +13,8 @@ export class SyncControlsComponent {
 
   activeOffsetKey$ = this.controlsService.getSynchronizedOffsetKey();
   activeOffset$ = this.activeOffsetKey$.map(k => DefaultOffsets[k]);
+  canSyncOlder$ = this.controlsService.canSyncOlder();
+  canSyncNewer$ = this.controlsService.canSyncNewer();
 
   offsetMap = DefaultOffsets
   orderedOffsetKeys = DefaultOrderedOffsetKeys

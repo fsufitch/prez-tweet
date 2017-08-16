@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 
 import { DefaultOffsetKey } from '../../common';
+import { Tweet } from '../tweet';
 
 export class SetSynchronizedOffsetAction implements Action {
   static type = 'prez-tweet/controls/setSyncOffset';
@@ -18,21 +19,22 @@ export class UpdateSynchronizedOffsetAction implements Action {
   }) {}
 }
 
-export class UpdateSynchronizedOlderAction implements Action {
-  static type = 'prez-tweet/controls/updateSyncOlder'
-  type = UpdateSynchronizedOlderAction.type;
+export class TriggerSynchronizedOlderAction implements Action {
+  static type = 'prez-tweet/controls/triggerSyncOlder';
+  type = TriggerSynchronizedOlderAction.type;
   constructor(public payload: {
     offsetYears: number,
-    obamaTweetStringID: string,
-    trumpTweetStringID: string,
+    obamaTweet: Tweet,
+    trumpTweet: Tweet,
   }) {}
 }
-export class UpdateSynchronizedNewerAction implements Action {
-  static type = 'prez-tweet/controls/updateSyncNewer'
-  type = UpdateSynchronizedNewerAction.type;
+
+export class TriggerSynchronizedNewerAction implements Action {
+  static type = 'prez-tweet/controls/triggerSyncNewer';
+  type = TriggerSynchronizedNewerAction.type;
   constructor(public payload: {
     offsetYears: number,
-    obamaTweetStringID: string,
-    trumpTweetStringID: string,
+    obamaTweet: Tweet,
+    trumpTweet: Tweet,
   }) {}
 }

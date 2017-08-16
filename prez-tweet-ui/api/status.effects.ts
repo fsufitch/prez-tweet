@@ -10,7 +10,7 @@ import {
   SetStatusAction,
 } from '../store';
 
-import '../common';
+import {scrubHttp} from '../common';
 
 interface UpdateStatusResponseData {
   api: string,
@@ -27,37 +27,29 @@ export class StatusAPIEffects {
     private actions: Actions,
   ) {}
 
-  @Effect() autoStatusUpdate$ = Observable.timer(0, 5000)
+  @Effect() autoStatusUpdate$ = Observable.timer(0)
     .map(() => new UpdateAPIStatusAction())
 
-  @Effect() updateStatus$ = this.actions
+  private updateStatus$ = this.actions
     .ofType(UpdateAPIStatusAction.type)
-    .switchMap(() => this.http.get(`//${this.apiHost}/api/status`)
-      .do(r => {
-        if (r.status != 200) {
-          throw r.text();
-        }
-      })
-      .map(response => ({response: response, error: null}))
-      .catch(error => Observable.of({response: <Response>null, error}))
-    )
+    .switchMap(() => scrubHttp(this.http.get(`//${this.apiHost}/api/status`)))
     .share();
 
-    @Effect() updateStatusError$ = this.updateStatus$
-      .filter(({error}) => (!!error))
-      .map(({error}) => new SetStatusAction({
-        ok: false,
-        uptimeSec: 0,
-        error: ''+error,
-      }));
+  @Effect() updateStatusError$ = this.updateStatus$
+    .filter(({error}) => (!!error))
+    .map(({error}) => new SetStatusAction({
+      ok: false,
+      uptimeSec: 0,
+      error: ''+error,
+    }));
 
-    @Effect() updateStatusSuccess$ = this.updateStatus$
-      .filter(({error}) => (!error))
-      .map(({response}) => <UpdateStatusResponseData>response.json())
-      .map(data => new SetStatusAction({
-        ok: true,
-        uptimeSec: data.uptime_sec,
-        error: null,
-      }));
+  @Effect() updateStatusSuccess$ = this.updateStatus$
+    .filter(({error}) => (!error))
+    .map(({response}) => <UpdateStatusResponseData>response.json())
+    .map(data => new SetStatusAction({
+      ok: true,
+      uptimeSec: data.uptime_sec,
+      error: null,
+    }));
 
 }

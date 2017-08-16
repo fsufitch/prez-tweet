@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 import { Effect, Actions } from '@ngrx/effects';
-import { SetObamaTweetIDAction, SetTrumpTweetIDAction } from '../../store';
-import { TweetService, CompareTweetsService } from '../shared';
+import { SetCurrentTweetPairAction } from '../../store';
+import { TweetService } from '../shared';
 
 @Injectable()
 export class CompareTweetsEffects {
@@ -12,21 +12,16 @@ export class CompareTweetsEffects {
     private router: Router,
     private actions: Actions,
     private tweetService: TweetService,
-    private compareTweetsService: CompareTweetsService,
   ) {}
 
 
   @Effect() navigateToCurrentShortId$ = this.actions
-    .ofType(SetObamaTweetIDAction.type, SetTrumpTweetIDAction.type)
-    .switchMap(() => Observable.combineLatest(
-      this.tweetService.getObamaTweetID(),
-      this.tweetService.getTrumpTweetID(),
-    ))
-    .filter(ids => ids.every(id => !!id))
-    .distinctUntilChanged(([o1, t1], [o2, t2]) => o1 == o2 && t1 == t2)
-    .flatMap(([obamaTweetID, trumpTweetID]) => this.compareTweetsService.getShortIDByTweetPair(obamaTweetID, trumpTweetID))
-    .filter(shortId => !!shortId)
-    .flatMap(shortId => Observable.fromPromise(this.router.navigate(['p', shortId]))
+    .ofType(SetCurrentTweetPairAction.type)
+    .map(action => (<SetCurrentTweetPairAction>action).payload.id)
+    .flatMap(pairId => this.tweetService.getTweetPair(pairId))
+    .filter(pair => !!pair)
+    .distinctUntilChanged((x, y) => x.id == y.id)
+    .flatMap(pair => Observable.fromPromise(this.router.navigate(['p', pair.shortID]))
       .do(success => {
         if (!success) {
           console.warn('Navigation canceled');

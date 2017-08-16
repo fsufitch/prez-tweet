@@ -27,8 +27,8 @@ export class TweetComponent implements OnChanges {
   }
 
   private updateTweet(id: string, options: TwttrOptions={}) {
-    if (!id) return;
     this.tweetReady = false;
+    if (!id) return;
     options.dnt = options.dnt === undefined ? true: options.dnt;
     let cb = (newTweet: HTMLElement) => this.zone.run(() => {
       if (!!this.tweetElement) {

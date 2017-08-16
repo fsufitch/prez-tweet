@@ -5,20 +5,35 @@ import { Actions, Effect } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
+import * as Moment from 'moment';
+
 import {
+  Tweet,
   UpdateLatestTweetIDsAction,
-  SetObamaTweetIDAction,
-  SetTrumpTweetIDAction,
   UpdateTweetPairFromPairAction,
   UpdateTweetPairFromShortIDAction,
   SetTweetPairAction,
+  PopulateTweetAction,
+  SetTweetAction,
+  SetCurrentTweetPairAction,
+  createTweetPairLongID,
 } from '../store';
 
-import '../common';
+import { scrubHttp } from '../common';
 
 interface UpdateLatestTweetsResponseData {
-  obama_tweet_id_str: string,
-  trump_tweet_id_str: string,
+  obama_tweet_id_str: string;
+  trump_tweet_id_str: string;
+}
+
+interface PopulateTweetResponseData {
+  tweet_id_str: string;
+  prev_id_str: string;
+  next_id_str: string;
+  screen_name: string;
+  is_trump: boolean;
+  is_obama: boolean;
+  timestamp: number;
 }
 
 @Injectable()
@@ -32,15 +47,7 @@ export class TweetAPIEffects {
 
   private updateLatestTweets$ = this.actions
     .ofType(UpdateLatestTweetIDsAction.type)
-    .switchMap(() => this.http.get(`//${this.apiHost}/api/latest`)
-      .do(r => {
-        if (r.status != 200) {
-          throw r.text();
-        }
-      })
-      .map(response => ({response: response, error: null}))
-      .catch(error => Observable.of({response: <Response>null, error}))
-    )
+    .switchMap(() => scrubHttp(this.http.get(`//${this.apiHost}/api/latest`)))
     .share();
 
   @Effect() updateLatestTweetsError$ = this.updateLatestTweets$
@@ -53,8 +60,28 @@ export class TweetAPIEffects {
   @Effect() updateLatestTweetsSuccess$ = this.updateLatestTweets$
     .filter(({error}) => (!error))
     .map(({response}) => <UpdateLatestTweetsResponseData>response.json())
-    .flatMap(data => Observable.of(
-      new SetObamaTweetIDAction({tweetID: data.obama_tweet_id_str}),
-      new SetTrumpTweetIDAction({tweetID: data.trump_tweet_id_str})
-    ));
+    .map(data => ({obama: data.obama_tweet_id_str, trump: data.trump_tweet_id_str}))
+    .flatMap(({obama, trump}) => Observable.from([
+      new UpdateTweetPairFromPairAction({obamaTweetID: obama, trumpTweetID: trump}),
+      new SetCurrentTweetPairAction({id: createTweetPairLongID(obama, trump)}),
+    ]));
+
+  private populateTweet$ = this.actions
+    .ofType(PopulateTweetAction.type)
+    .map(action => (<PopulateTweetAction>action).payload.idStr)
+    .flatMap(id => scrubHttp(this.http.get(`//${this.apiHost}/api/tweet/${id}`)))
+    .share();
+
+  @Effect() populateTweetSuccess$ = this.populateTweet$
+    .filter(({error}) => !error)
+    .map(({response}) => <PopulateTweetResponseData>response.json())
+    .map(data => ({
+      idStr: data.tweet_id_str,
+      nextIDStr: data.next_id_str,
+      previousIDStr: data.prev_id_str,
+      screenName: data.screen_name,
+      author: data.is_obama ? 'obama' : data.is_trump ? 'trump' : 'unknown',
+      timestamp: Moment(data.timestamp * 1000),
+    }))
+    .map((tweet: Tweet) => new SetTweetAction({tweet}));
 }

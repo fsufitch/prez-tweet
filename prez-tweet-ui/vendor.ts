@@ -13,6 +13,8 @@ import '@ngrx/effects';
 import '@ngrx/core/add/operator/select'
 import 'rxjs/Rx';
 
+import 'moment';
+
 import 'jquery';
 import 'bootstrap-sass';
 require('style-loader!./vendor-styles.scss');
