@@ -147,16 +147,18 @@ This is a quick summary of the functionality provided by the backend's endpoints
 
 - `GET /status` - Provide server status in JSON format
 - `GET /latest` - Retrieve the tweet IDs of the latest presidential tweets
+- `GET /tweet/{id}` - Retrieve details about a specific tweet and the ones bracketing
+  it in its timeline
 - **Synchronized tweet browsing** - These endpoints enable browsing tweets by keeping
   their dates aligned (with an optional offset)
   - `GET /syncApplyOffset?tweet1=XXX&tweet2=YYY&tweet1_offset_years=ZZZ` - Apply
     the given offset to the pair of tweets in question, and return the new tweet IDs;
     i.e. "replace the first tweet with a tweet by the same author but set
     ZZZ years before the second tweet"
-  - `GET /syncOlder?tweet1=XXX&tweet2=YYY&tweet1_offset_years=ZZZ` - Navigate backward
+  - *(Deprecated)* `GET /syncOlder?tweet1=XXX&tweet2=YYY&tweet1_offset_years=ZZZ` - Navigate backward
     in time, replacing the newer of the two tweets with the next oldest tweet by the
     same author, and taking into account the offset
-  - `GET /syncNewer?tweet1=XXX&tweet2=YYY&tweet1_offset_years=ZZZ` - Navigate forward
+  - *(Deprecated)* `GET /syncNewer?tweet1=XXX&tweet2=YYY&tweet1_offset_years=ZZZ` - Navigate forward
     in time, replacing the older of the two tweets with the next newest tweet by the
     same author, and taking into account the offset
 - **Tweet pairs** - These endpoints provide unique IDs for pairs of tweets, for permalinking
