@@ -1,4 +1,5 @@
 import { Action } from '@ngrx/store';
+import * as Moment from 'moment';
 
 export class UpdateAPIStatusAction implements Action {
     static type = 'prez-tweet/status/updateStatus';
@@ -12,5 +13,7 @@ export class SetStatusAction implements Action {
     ok: boolean,
     uptimeSec: number,
     error: string,
+    lastCrawlAt: Moment.Moment,
+    debugID: string,
   }) {}
 }

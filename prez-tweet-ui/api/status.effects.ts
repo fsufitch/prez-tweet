@@ -4,6 +4,7 @@ import { Http, Response } from '@angular/http';
 import { Actions, Effect } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import * as Moment from 'moment';
 
 import {
   UpdateAPIStatusAction,
@@ -16,6 +17,8 @@ interface UpdateStatusResponseData {
   api: string,
   ui: string,
   uptime_sec: number,
+  debug_string: string,
+  last_crawl_at: number,
 }
 
 @Injectable()
@@ -27,7 +30,7 @@ export class StatusAPIEffects {
     private actions: Actions,
   ) {}
 
-  @Effect() autoStatusUpdate$ = Observable.timer(0)
+  @Effect() autoStatusUpdate$ = Observable.timer(0, 30000)
     .map(() => new UpdateAPIStatusAction())
 
   private updateStatus$ = this.actions
@@ -41,6 +44,8 @@ export class StatusAPIEffects {
       ok: false,
       uptimeSec: 0,
       error: ''+error,
+      debugID: undefined,
+      lastCrawlAt: undefined,
     }));
 
   @Effect() updateStatusSuccess$ = this.updateStatus$
@@ -50,6 +55,8 @@ export class StatusAPIEffects {
       ok: true,
       uptimeSec: data.uptime_sec,
       error: null,
+      debugID: data.debug_string,
+      lastCrawlAt: Moment(data.last_crawl_at * 1000),
     }));
 
 }

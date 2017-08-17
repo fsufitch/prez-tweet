@@ -14,9 +14,11 @@ type Handler struct {
 }
 
 type statusResponse struct {
-	API    string  `json:"api"`
-	UI     string  `json:"ui"`
-	Uptime float64 `json:"uptime_sec"`
+	API         string  `json:"api"`
+	UI          string  `json:"ui"`
+	Uptime      float64 `json:"uptime_sec"`
+	LastCrawlAt int64   `json:"last_crawl_at"`
+	DebugString string  `json:"debug_string"`
 }
 
 // NewHandler creates a new handler and its state
@@ -31,9 +33,11 @@ func NewHandler(host string, js string) *Handler {
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uptime := time.Now().Sub(h.startTime).Seconds()
 	response := statusResponse{
-		API:    h.APIHost,
-		UI:     h.UIResURL,
-		Uptime: uptime,
+		API:         h.APIHost,
+		UI:          h.UIResURL,
+		Uptime:      uptime,
+		LastCrawlAt: lastCrawlAt.Unix(),
+		DebugString: getDebugIdentifier(),
 	}
 	data, _ := json.Marshal(response)
 

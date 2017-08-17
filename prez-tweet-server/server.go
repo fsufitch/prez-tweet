@@ -78,6 +78,7 @@ func runCrawl() (err error) {
 		}
 	}
 	close(done)
+	status.RecordCrawlFinished()
 	return
 }
 

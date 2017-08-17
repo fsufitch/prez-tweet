@@ -1,7 +1,10 @@
-<div [hidden]="ok$ | async">
+<div class="smalltext error" [hidden]="ok$ | async">
   <!-- not ok -->
   Could not contact the API server.
+  <span *ngIf="error$ | async">{{error$ | async}}</span>
 </div>
-<div [hidden]="!(ok$ | async)">
-  API server uptime: {{uptime$ | async}}
+<div class="smalltext muted" [hidden]="!(ok$ | async)">
+  <span> Debug ID: {{debugID$ | async}} </span> |
+  <span> Uptime: {{uptime$ | async}}s </span> |
+  <span> Last Twitter crawl: {{lastCrawlStr$ | async}} </span>
 </div>
