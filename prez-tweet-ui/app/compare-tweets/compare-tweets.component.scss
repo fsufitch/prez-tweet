@@ -3,6 +3,15 @@
   flex-flow: row wrap;
   justify-content: center;
 
+  .tweet-column {
+    margin: 5px;
+
+    flex-basis: 0.5;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+  }
+
   tweet {
     margin: 5px;
   }

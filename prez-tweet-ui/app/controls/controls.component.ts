@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { ControlMode } from '../../common';
-import { SyncControlsComponent } from './sync-controls.component';
+import { DefaultOffsetKey, DefaultOffsets, DefaultOrderedOffsetKeys } from '../../common';
+import { ControlsService } from './controls.service';
 
 @Component({
   selector: 'appcontrols',
@@ -11,7 +11,27 @@ import { SyncControlsComponent } from './sync-controls.component';
   ],
 })
 export class ControlsComponent {
-  ControlMode = ControlMode; // For template use
-  @Input() mode: ControlMode;
-  @Output() modeChanged = new EventEmitter<ControlMode>();
+  constructor(private controlsService: ControlsService) {}
+  showSyncBrowsing = false;
+
+  activeOffsetKey$ = this.controlsService.getSynchronizedOffsetKey();
+  activeOffset$ = this.activeOffsetKey$.map(k => DefaultOffsets[k]);
+
+  canSyncOlder$ = this.controlsService.canSyncOlder();
+  canSyncNewer$ = this.controlsService.canSyncNewer();
+
+  offsetMap = DefaultOffsets
+  orderedOffsetKeys = DefaultOrderedOffsetKeys
+
+  offsetClicked(offsetKey: DefaultOffsetKey) {
+    this.controlsService.setSynchronizedOffset(offsetKey);
+  }
+
+  olderClicked() {
+    this.controlsService.triggerSynchronizedOlder();
+  }
+
+  newerClicked() {
+    this.controlsService.triggerSynchronizedNewer();
+  }
 }

@@ -1,4 +1,18 @@
 <div class="compared-tweets">
-  <tweet [idStr]="trumpTweetID$ | async"></tweet>
-  <tweet [idStr]="obamaTweetID$ | async"></tweet>
+  <div class="tweet-column">
+    <tweet-nav
+      [prevTweetID]="prevTrumpTweetID$ | async"
+      [nextTweetID]="nextTrumpTweetID$ | async"
+      (tweetSelected)="navigateTweet($event, 'trump')">
+    </tweet-nav>
+    <tweet [idStr]="trumpTweetID$ | async"></tweet>
+  </div>
+  <div class="tweet-column">
+    <tweet-nav
+      [prevTweetID]="prevObamaTweetID$ | async"
+      [nextTweetID]="nextObamaTweetID$ | async"
+      (tweetSelected)="navigateTweet($event, 'obama')">
+    </tweet-nav>
+    <tweet [idStr]="obamaTweetID$ | async"></tweet>
+  </div>
 </div>
