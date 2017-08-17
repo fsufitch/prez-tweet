@@ -15,7 +15,7 @@ const ROUTES: Routes = [
   },
   {
     path: 'p',
-    resolve: {pairShortId: TweetPairResolver},
+    resolve: {tweetPair: TweetPairResolver},
     component: CompareTweetsComponent,
   },
 ];
