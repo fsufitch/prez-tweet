@@ -1,7 +1,7 @@
 Modern Presidential Tweeting
 ============================
 
-> See me live here: https://modernpersidentialtweeting.herokuapp.com
+> See this project live here: https://www.preztweet.com
 
 This is a project attempting to define what "modern day presidential" tweets
 are, as referred to by the USA's 45th president:
