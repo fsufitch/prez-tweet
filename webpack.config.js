@@ -3,6 +3,7 @@
 // Helper: root() is defined at the bottom
 var path = require('path');
 var webpack = require('webpack');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var ENV = process.env.ENV;
 var isDeploy = ENV === 'deploy';
@@ -58,6 +59,10 @@ module.exports = () => {
   };
 
   config.plugins = [
+    new CopyWebpackPlugin([{
+      from: root('prez-tweet-ui', 'static'),
+      flatten: true,
+    }]),
     new CommonsChunkPlugin({
       name: ['vendor', 'polyfill'],
     }),
