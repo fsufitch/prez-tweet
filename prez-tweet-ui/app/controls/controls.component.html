@@ -4,9 +4,11 @@
       <ul class="nav navbar-nav">
         <li>
           <p class="navbar-text"> Load Tweet: </p>
-          <form class="navbar-form navbar-left">
+          <form class="navbar-form navbar-left" (ngSubmit)="browseToTweet()">
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Paste Tweet URL here" [disabled]="true"/>
+              <input class="form-control" type="text" name="tweetURL"
+                placeholder="Paste Tweet URL here"
+                [(ngModel)]="browseToTweetURL"/>
             </div>
           </form>
         </li>

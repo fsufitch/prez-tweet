@@ -13,6 +13,7 @@ import { ControlsService } from './controls.service';
 export class ControlsComponent {
   constructor(private controlsService: ControlsService) {}
   showSyncBrowsing = false;
+  browseToTweetURL = '';
 
   activeOffsetKey$ = this.controlsService.getSynchronizedOffsetKey();
   activeOffset$ = this.activeOffsetKey$.map(k => DefaultOffsets[k]);
@@ -33,5 +34,10 @@ export class ControlsComponent {
 
   newerClicked() {
     this.controlsService.triggerSynchronizedNewer();
+  }
+
+  browseToTweet() {
+    this.controlsService.navigateToTweet(this.browseToTweetURL);
+    this.browseToTweetURL = '';
   }
 }

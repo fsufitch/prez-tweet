@@ -88,7 +88,6 @@ export class ControlsService {
     );
   }
 
-
   private getSyncTriggerArguments() {
     let trumpTweet$ = this.tweetService.getTrumpTweet().first(tw => !!tw);
     let obamaTweet$ = this.tweetService.getObamaTweet().first(tw => !!tw);
@@ -98,5 +97,38 @@ export class ControlsService {
 
     return Observable.zip(obamaTweet$, trumpTweet$, syncOffset$)
       .map(([obamaTweet, trumpTweet, offsetYears]) => ({obamaTweet, trumpTweet, offsetYears}))
+  }
+
+  navigateToTweet(tweetURL: string) {
+    let matches = tweetURL.match(/https?:\/\/twitter.com\/.*\/status\/(\d+)/);
+    if (!matches || matches.length < 2 || !matches[1]) {
+      alert('Invalid tweet URL: ' + tweetURL);
+      return;
+    }
+    let tweetID = matches[1];
+
+    let tweetPair$ = this.tweetService.getCurrentTweetPairID()
+      .flatMap(id => this.tweetService.getTweetPair(id))
+      .filter(pair => !!pair);
+
+    this.tweetService.populateTweet(tweetID, false);
+    this.tweetService.getTweet(tweetID)
+      .first(tw => !!tw)
+      .withLatestFrom(tweetPair$)
+      .map(([tw, pair]) => {
+        switch (tw.author) {
+          case 'obama': return {obama: tw.idStr, trump: pair.trumpTweetID};
+          case 'trump': return {obama: pair.obamaTweetID, trump: tw.idStr};
+          default: throw 'Unknown tweet author ' + tw.author;
+        }
+      })
+      .flatMap(({obama, trump}) => this.tweetService.getTweetPairFromTweets(obama, trump)
+        .map(pair => ({obama, trump, pair}))
+      )
+      .do(({obama, trump, pair}) => {
+        if (!pair) this.tweetService.populateTweetPairFromTweets(obama, trump);
+      })
+      .first(({pair}) => !!pair)
+      .subscribe(({pair}) => this.tweetService.setCurrentTweetPairID(pair.shortID));
   }
 }
